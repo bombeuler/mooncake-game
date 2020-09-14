@@ -7,7 +7,10 @@ import VueRx from "vue-rx";
 //此处引入组件
 import { Button } from "vant";
 import { Form } from "vant";
+import { Col, Row } from "vant";
 
+Vue.use(Col);
+Vue.use(Row);
 Vue.use(Form);
 Vue.use(Button);
 //引入完记得use
