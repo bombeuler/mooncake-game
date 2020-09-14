@@ -1,12 +1,15 @@
 <template>
   <div id="app">
-    <router-view :key="nowkey" />
+    <router-view :key="nowKey" />
   </div>
 </template>
 
 <script>
 export default {
   name: "App",
+  data() {
+    return {};
+  },
   computed: {
     nowKey() {
       return this.$route.name;
