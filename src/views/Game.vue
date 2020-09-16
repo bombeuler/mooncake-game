@@ -11,7 +11,21 @@
         <van-button @click="plusItem('dough',15)">面</van-button>
         <van-button @click="deleteSubject">垃圾桶</van-button>
       </div>
-      <div class="student" @click="makeCake"></div>
+      <div class="student" @click="makeCake">
+        <div class="notice">{{notice}}</div>
+        <img class="people" src="https://dummyimage.com/300x300.png?text=student" />
+        <div class="stuList">
+          <div
+            v-for="sub in nowStudent.deadSubjects"
+            :key="sub.subject"
+            class="grade-group"
+            :background-image="`linear-gradient(to right,${progressColor} ${parseInt(sub.eatAdd/sub.grade*100)}%, white 0px)`"
+          >
+            <span>{{subValue(sub.subject)}}</span>
+            <span>{{sub.grade}}</span>
+          </div>
+        </div>
+      </div>
     </van-row>
     <van-row class="bottom">
       <div class="subject-group">
@@ -41,11 +55,14 @@ export default {
   name: "Game",
   data() {
     return {
+      notice: "",
+      progressColor: "#e67e22",
+      firstTime: null,
       name: "BOMB",
       score: 34,
       sugar: 0,
       dough: 0,
-      nowstudent: new Student(0, true),
+      nowStudent: new Student(0, true),
       hasSubject: [],
       subjects: [
         { name: "数学分析", key: "m0" },
@@ -59,6 +76,9 @@ export default {
     };
   },
   computed: {
+    subValue() {
+      return (subjectKey) => Student.subLists.get(subjectKey);
+    },
     subjectOut1() {
       let arr = this.subjects;
       let out = [];
@@ -98,8 +118,14 @@ export default {
       this.hasSubject.splice(0, this.hasSubject.length);
     },
     makeCake() {
+      //TODO 点击学生事件
       console.log(this.nowStudent);
+      console.log(2);
     },
+  },
+  created() {},
+  mounted() {
+    this.firstTime = new Date();
   },
 };
 </script>
@@ -112,6 +138,22 @@ export default {
   flex-direction: $direct;
   justify-content: space-around;
   align-items: center;
+}
+
+@mixin border-normal($direct, $colour: black) {
+  @if $direct == 0 {
+    border: {
+      style: solid;
+      width: 0.1px;
+      color: $colour;
+    }
+  } @else {
+    border-#{$direct}: {
+      style: solid;
+      width: 0.1px;
+      color: $colour;
+    }
+  }
 }
 
 .game {
@@ -154,6 +196,26 @@ export default {
       margin: 0 auto;
       width: 50vw;
       min-height: 50vh;
+      @include flex-normal(column);
+      @include border-normal(0);
+      .notice {
+        width: 100%;
+        height: 10%;
+        @include border-normal(top);
+      }
+      .people {
+        width: 100%;
+      }
+      .stuList {
+        width: 100%;
+        .grade-group {
+          width: 100%;
+          @include flex-normal(row);
+          user-select: none;
+          padding: 2px;
+          @include border-normal(top);
+        }
+      }
     }
   }
   .bottom {
@@ -168,7 +230,6 @@ export default {
       shrink: 0;
     }
     .subject-group {
-      display: flex;
       @include flex-normal(row);
     }
   }

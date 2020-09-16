@@ -31,6 +31,7 @@ class Student {
         subject: preSubjects[i],
         grade: scored,
         finnished: false,
+        eatAdd: 0,
       });
     }
     this.deadSubjects = preArr;
