@@ -1,49 +1,51 @@
 <template>
-  <main class="game">
-    <van-row type="flex" class="top" justify="start" align="center">
-      <van-col span="8" offset="2">{{name}}</van-col>
-      <van-col span="4" offset="1" class="my-score">{{sugar}}+{{dough}}</van-col>
-      <van-col span="7">剩余机会：{{score}}</van-col>
-    </van-row>
-    <van-row class="middle">
-      <div class="main-food">
-        <van-button @click="plusItem('sugar',15)">烧糖</van-button>
-        <van-button @click="plusItem('dough',15)">面</van-button>
-        <van-button @click="deleteSubject">垃圾桶</van-button>
-      </div>
-      <div class="student" @click="makeCake">
-        <div class="notice">{{notice}}</div>
-        <img class="people" src="https://dummyimage.com/300x300.png?text=student" />
-        <div class="stuList">
-          <div
-            v-for="sub in nowStudent.deadSubjects"
-            :key="sub.subject"
-            class="grade-group"
-            :background-image="`linear-gradient(to right,${progressColor} ${parseInt(sub.eatAdd/sub.grade*100)}%, white 0px)`"
-          >
-            <span>{{subValue(sub.subject)}}</span>
-            <span>{{sub.grade}}</span>
+  <div>
+    <main class="game">
+      <van-row type="flex" class="top" justify="start" align="center">
+        <van-col span="8" offset="2">{{name}}</van-col>
+        <van-col span="4" offset="1" class="my-score">{{sugar}}+{{dough}}</van-col>
+        <van-col span="7">剩余机会：{{score}}</van-col>
+      </van-row>
+      <van-row class="middle">
+        <div class="main-food">
+          <van-button @click="plusItem('sugar',15)">烧糖</van-button>
+          <van-button @click="plusItem('dough',15)">面</van-button>
+          <van-button @click="deleteSubject">垃圾桶</van-button>
+        </div>
+        <div class="student" @click="makeCake">
+          <div class="notice">{{notice}}</div>
+          <img class="people" src="https://dummyimage.com/300x300.png?text=student" />
+          <div class="stuList">
+            <div
+              v-for="sub in nowStudent.deadSubjects"
+              :key="sub.subject"
+              class="grade-group"
+              :background-image="`linear-gradient(to right,${progressColor} ${parseInt(sub.eatAdd/sub.grade*100)}%, white 0px)`"
+            >
+              <span>{{subValue(sub.subject)}}</span>
+              <span>{{sub.grade}}</span>
+            </div>
           </div>
         </div>
-      </div>
-    </van-row>
-    <van-row class="bottom">
-      <div class="subject-group">
-        <van-button
-          v-for="subject in subjectOut1"
-          :key="subject.key"
-          @click="plusSubject(subject.key)"
-        >{{subject.name}}</van-button>
-      </div>
-      <div class="subject-group">
-        <van-button
-          v-for="subject in subjectOut2"
-          :key="subject.key"
-          @click="plusSubject(subject.key)"
-        >{{subject.name}}</van-button>
-      </div>
-    </van-row>
-  </main>
+      </van-row>
+      <van-row class="bottom">
+        <div class="subject-group">
+          <van-button
+            v-for="subject in subjectOut1"
+            :key="subject.key"
+            @click="plusSubject(subject.key)"
+          >{{subject.name}}</van-button>
+        </div>
+        <div class="subject-group">
+          <van-button
+            v-for="subject in subjectOut2"
+            :key="subject.key"
+            @click="plusSubject(subject.key)"
+          >{{subject.name}}</van-button>
+        </div>
+      </van-row>
+    </main>
+  </div>
 </template>
 
 <script>

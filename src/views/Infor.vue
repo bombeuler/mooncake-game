@@ -1,30 +1,32 @@
 <template>
-  <div id="container">
-    <div id="infor">
-      <div id="avatar">
-        <div id="avatar-img"></div>
-        <div id="avatar-name">cyc</div>
+  <div>
+    <div id="container">
+      <div id="infor">
+        <div id="avatar">
+          <div id="avatar-img"></div>
+          <div id="avatar-name">cyc</div>
+        </div>
+        <div id="my-infor">
+          <div id="my-rank" class="infor">
+            <div>名次</div>1
+          </div>
+          <hr />
+          <div id="my-score-st" class="infor">
+            <div>最高分数</div>9999
+          </div>
+          <hr />
+          <div id="my-credit" class="infor">
+            <div>当前所得积分</div>88
+          </div>
+        </div>
       </div>
-      <div id="my-infor">
-        <div id="my-rank" class="infor">
-          <div>名次</div>1
-        </div>
-        <hr />
-        <div id="my-score-st" class="infor">
-          <div>最高分数</div>9999
-        </div>
-        <hr />
-        <div id="my-credit" class="infor">
-          <div>当前所得积分</div>88
-        </div>
+      <div id="rule">积分计算规则</div>
+      <div id="logout">
+        <van-button color="skyblue" round size="large">退出登录</van-button>
       </div>
-    </div>
-    <div id="rule">积分计算规则</div>
-    <div id="logout">
-      <van-button color="skyblue" round size="large">退出登录</van-button>
-    </div>
-    <div id="arrow-back" v-on:click="backToHome">
-      <van-icon name="arrow-left" size="20" />
+      <div id="arrow-back" v-on:click="backToHome">
+        <van-icon name="arrow-left" size="20" />
+      </div>
     </div>
   </div>
 </template>
@@ -40,8 +42,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-@import url("../style/var.scss");
+<style lang="css" scoped>
 #container {
   width: 80vw;
   height: 60vh;

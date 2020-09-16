@@ -1,115 +1,117 @@
 <template>
-  <div id="container">
-    <div id="infor" v-if="!signStatus" v-bind:class="[active==0 ?'signIn':'signUp']">
-      <van-tabs
-        v-model="active"
-        background="grey"
-        swipeable
-        animated
-        color="white"
-        title-active-color="white"
-        @change="onChange"
-      >
-        <van-tab title="登录">
-          <div id="signin">
-            <van-form @submit="onSignIn" label-width="30px" :show-error="false">
-              <van-field
-                v-model="username"
-                name="name"
-                label="昵称"
-                placeholder
-                :rules="[{ required: true, message: '请填写昵称' }]"
-              />
-              <van-field
-                v-model="password"
-                type="password"
-                name="password"
-                label="密码"
-                placeholder
-                :rules="[{ required: true, message: '请填写密码' }]"
-              />
-              <div style="margin: 16px;">
-                <van-button round block type="default" native-type="submit">登录</van-button>
-              </div>
-            </van-form>
-          </div>
-        </van-tab>
-        <van-tab title="注册">
-          <div id="signup">
-            <van-form @submit="onSignUp" label-width="30px" :show-error="false">
-              <van-field
-                v-model="stuNum"
-                name="stuNum"
-                label="学号"
-                placeholder="U202001010"
-                :rules="[{ required: true,pattern , message: '请输入正确学号' }]"
-              />
-              <van-field
-                v-model="realName"
-                name="real-name"
-                label="真名"
-                placeholder="阿尔托莉雅"
-                :rules="[{ required: true, message: '请填写真名' }]"
-              />
-              <van-field
-                v-model="tel"
-                name="tel"
-                type="tel"
-                label="电话"
-                placeholder
-                :rules="[{ required: true, message: '请填写电话' }]"
-              />
-              <van-field
-                v-model="username"
-                name="name"
-                label="昵称"
-                placeholder="可可爱爱的pp"
-                :rules="[{ required: true, message: '请填写昵称' }]"
-              />
-              <van-field
-                v-model="password"
-                type="password"
-                name="password"
-                label="密码"
-                placeholder
-                :rules="[{ required: true, message: '请填写密码' }]"
-              />
-              <div style="margin: 16px;">
-                <van-button round block type="default" native-type="submit">注册</van-button>
-              </div>
-            </van-form>
-          </div>
-        </van-tab>
-      </van-tabs>
-      <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
-        <a href="http://hustmaths.top">前往科协首页</a>
-      </div>
-    </div>
-    <div v-if="signStatus" id="game-start">
-      <van-button icon="play" type="default" text="开始游戏" round block></van-button>
-      <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
-        <a href="http://hustmaths.top">前往科协首页</a>
-      </div>
-    </div>
-    <div v-if="signStatus" id="others">
-      <div id="others-box">
-        <div id="intro" class="others-content" v-on:click="showIntro">
-          <div class="icon-10">
-            <van-icon size="5.7vw" name="newspaper-o" />
-          </div>
-          <span>游戏简介</span>
+  <div>
+    <div id="container">
+      <div id="infor" v-if="!signStatus" v-bind:class="[active==0 ?'signIn':'signUp']">
+        <van-tabs
+          v-model="active"
+          background="grey"
+          swipeable
+          animated
+          color="white"
+          title-active-color="white"
+          @change="onChange"
+        >
+          <van-tab title="登录">
+            <div id="signin">
+              <van-form @submit="onSignIn" label-width="30px" :show-error="false">
+                <van-field
+                  v-model="username"
+                  name="name"
+                  label="昵称"
+                  placeholder
+                  :rules="[{ required: true, message: '请填写昵称' }]"
+                />
+                <van-field
+                  v-model="password"
+                  type="password"
+                  name="password"
+                  label="密码"
+                  placeholder
+                  :rules="[{ required: true, message: '请填写密码' }]"
+                />
+                <div style="margin: 16px;">
+                  <van-button round block type="default" native-type="submit">登录</van-button>
+                </div>
+              </van-form>
+            </div>
+          </van-tab>
+          <van-tab title="注册">
+            <div id="signup">
+              <van-form @submit="onSignUp" label-width="30px" :show-error="false">
+                <van-field
+                  v-model="stuNum"
+                  name="stuNum"
+                  label="学号"
+                  placeholder="U202001010"
+                  :rules="[{ required: true,pattern , message: '请输入正确学号' }]"
+                />
+                <van-field
+                  v-model="realName"
+                  name="real-name"
+                  label="真名"
+                  placeholder="阿尔托莉雅"
+                  :rules="[{ required: true, message: '请填写真名' }]"
+                />
+                <van-field
+                  v-model="tel"
+                  name="tel"
+                  type="tel"
+                  label="电话"
+                  placeholder
+                  :rules="[{ required: true, message: '请填写电话' }]"
+                />
+                <van-field
+                  v-model="username"
+                  name="name"
+                  label="昵称"
+                  placeholder="可可爱爱的pp"
+                  :rules="[{ required: true, message: '请填写昵称' }]"
+                />
+                <van-field
+                  v-model="password"
+                  type="password"
+                  name="password"
+                  label="密码"
+                  placeholder
+                  :rules="[{ required: true, message: '请填写密码' }]"
+                />
+                <div style="margin: 16px;">
+                  <van-button round block type="default" native-type="submit">注册</van-button>
+                </div>
+              </van-form>
+            </div>
+          </van-tab>
+        </van-tabs>
+        <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
+          <a href="http://hustmaths.top">前往科协首页</a>
         </div>
-        <div id="list" class="others-content" v-on:click="showList">
-          <div class="icon-11">
-            <van-icon size="7vw" name="bar-chart-o" />
-          </div>
-          <span>排行榜</span>
+      </div>
+      <div v-if="signStatus" id="game-start">
+        <van-button icon="play" type="default" text="开始游戏" round block></van-button>
+        <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
+          <a href="http://hustmaths.top">前往科协首页</a>
         </div>
-        <div id="home" class="others-content" v-on:click="showInfor">
-          <div class="icon-10">
-            <van-icon size="5.7vw" name="home-o" />
+      </div>
+      <div v-if="signStatus" id="others">
+        <div id="others-box">
+          <div id="intro" class="others-content" v-on:click="showIntro">
+            <div class="icon-10">
+              <van-icon size="5.7vw" name="newspaper-o" />
+            </div>
+            <span>游戏简介</span>
           </div>
-          <span>个人中心</span>
+          <div id="list" class="others-content" v-on:click="showList">
+            <div class="icon-11">
+              <van-icon size="7vw" name="bar-chart-o" />
+            </div>
+            <span>排行榜</span>
+          </div>
+          <div id="home" class="others-content" v-on:click="showInfor">
+            <div class="icon-10">
+              <van-icon size="5.7vw" name="home-o" />
+            </div>
+            <span>个人中心</span>
+          </div>
         </div>
       </div>
     </div>
@@ -169,7 +171,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-a{
+a {
   color: #000000;
 }
 #container {
