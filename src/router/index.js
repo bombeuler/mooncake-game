@@ -9,33 +9,34 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    redirect: "/home",
+    redirect: "/home"
   },
   {
     path: "/home",
     name: "Home",
-    component: Home,
+    component: Home
   },
   {
     path: "/game",
     name: "Game",
-    component: Game,
+    component: Game
   },
   {
     path: "/list",
     name: "List",
-    component: List,
-  }, {
+    component: List
+  },
+  {
     path: "/infor",
     name: "Infor",
-    component: Infor,
-  },
+    component: Infor
+  }
 ];
 
 const router = new VueRouter({
   mode: "hash",
   base: process.env.BASE_URL,
-  routes,
+  routes
 });
 
 export default router;

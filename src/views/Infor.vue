@@ -8,15 +8,18 @@
         </div>
         <div id="my-infor">
           <div id="my-rank" class="infor">
-            <div>名次</div>1
+            <div>名次</div>
+            1
           </div>
           <hr />
           <div id="my-score-st" class="infor">
-            <div>最高分数</div>9999
+            <div>最高分数</div>
+            9999
           </div>
           <hr />
           <div id="my-credit" class="infor">
-            <div>当前所得积分</div>88
+            <div>当前所得积分</div>
+            88
           </div>
         </div>
       </div>
@@ -37,8 +40,8 @@ export default {
   methods: {
     backToHome() {
       this.$router.push("/home");
-    },
-  },
+    }
+  }
 };
 </script>
 

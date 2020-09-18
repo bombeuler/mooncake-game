@@ -2,24 +2,40 @@
   <div>
     <div id="list">
       <div id="title">排行榜</div>
-      <van-list v-model="loading" :finished="finished" finished-text="---010---" @load="onLoad">
-        <li class="list" v-for="(item,index) in list" :key="index">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="---010---"
+        @load="onLoad"
+      >
+        <li class="list" v-for="(item, index) in list" :key="index">
           <van-row>
             <van-col span="8">
               <span
                 class="list-id"
-                v-bind:class="[[index+1!=1?index+1!=2?index+1!=3?'':'list-rd':'list-nd':'list-st']]"
-              >{{index+1}}</span>
+                v-bind:class="[
+                  [
+                    index + 1 != 1
+                      ? index + 1 != 2
+                        ? index + 1 != 3
+                          ? ''
+                          : 'list-rd'
+                        : 'list-nd'
+                      : 'list-st'
+                  ]
+                ]"
+                >{{ index + 1 }}</span
+              >
             </van-col>
             <van-col span="8">
-              <span>{{item.name}}</span>
+              <span>{{ item.name }}</span>
             </van-col>
             <van-col span="8">
-              <span>{{item.score}}</span>
+              <span>{{ item.score }}</span>
               <span>
-                <van-icon v-if="index+1==1" name="award" color="yellow" />
-                <van-icon v-if="index+1==2" name="award" color="blue" />
-                <van-icon v-if="index+1==3" name="award" color="red" />
+                <van-icon v-if="index + 1 == 1" name="award" color="yellow" />
+                <van-icon v-if="index + 1 == 2" name="award" color="blue" />
+                <van-icon v-if="index + 1 == 3" name="award" color="red" />
               </span>
             </van-col>
           </van-row>
@@ -30,13 +46,13 @@
       <div></div>
       <van-row id="my-van-row">
         <van-col span="8">
-          <span id="my-id">{{1}}</span>
+          <span id="my-id">{{ 1 }}</span>
         </van-col>
         <van-col span="8">
-          <span>{{'cyc'}}</span>
+          <span>{{ "cyc" }}</span>
         </van-col>
         <van-col span="8">
-          <span>{{'9999'}}</span>
+          <span>{{ "9999" }}</span>
         </van-col>
       </van-row>
     </div>
@@ -55,7 +71,7 @@ export default {
     return {
       list: [],
       loading: false,
-      finished: false,
+      finished: false
     };
   },
   methods: {
@@ -63,12 +79,12 @@ export default {
       //获取数据
       let list;
       Axios.post("http://localhost/mooncake-game/php/list")
-        .then((response) => {
+        .then(response => {
           let data = response.data;
           // console.log(data);
           this.list = this.list.concat(data);
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.log(error);
         });
       //渲染列表
@@ -82,8 +98,8 @@ export default {
     },
     backToHome() {
       this.$router.push("/home");
-    },
-  },
+    }
+  }
 };
 </script>
 

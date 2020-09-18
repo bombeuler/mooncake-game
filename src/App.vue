@@ -13,10 +13,9 @@ export default {
   computed: {
     nowKey() {
       return this.$route.name;
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

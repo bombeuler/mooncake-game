@@ -1,7 +1,11 @@
 <template>
   <div>
     <div id="container">
-      <div id="infor" v-if="!signStatus" v-bind:class="[active==0 ?'signIn':'signUp']">
+      <div
+        id="infor"
+        v-if="!signStatus"
+        v-bind:class="[active == 0 ? 'signIn' : 'signUp']"
+      >
         <van-tabs
           v-model="active"
           background="grey"
@@ -13,7 +17,11 @@
         >
           <van-tab title="登录">
             <div id="signin">
-              <van-form @submit="onSignIn" label-width="30px" :show-error="false">
+              <van-form
+                @submit="onSignIn"
+                label-width="30px"
+                :show-error="false"
+              >
                 <van-field
                   v-model="username"
                   name="name"
@@ -30,20 +38,28 @@
                   :rules="[{ required: true, message: '请填写密码' }]"
                 />
                 <div style="margin: 16px;">
-                  <van-button round block type="default" native-type="submit">登录</van-button>
+                  <van-button round block type="default" native-type="submit"
+                    >登录</van-button
+                  >
                 </div>
               </van-form>
             </div>
           </van-tab>
           <van-tab title="注册">
             <div id="signup">
-              <van-form @submit="onSignUp" label-width="30px" :show-error="false">
+              <van-form
+                @submit="onSignUp"
+                label-width="30px"
+                :show-error="false"
+              >
                 <van-field
                   v-model="stuNum"
                   name="stuNum"
                   label="学号"
                   placeholder="U202001010"
-                  :rules="[{ required: true,pattern , message: '请输入正确学号' }]"
+                  :rules="[
+                    { required: true, pattern, message: '请输入正确学号' }
+                  ]"
                 />
                 <van-field
                   v-model="realName"
@@ -76,19 +92,31 @@
                   :rules="[{ required: true, message: '请填写密码' }]"
                 />
                 <div style="margin: 16px;">
-                  <van-button round block type="default" native-type="submit">注册</van-button>
+                  <van-button round block type="default" native-type="submit"
+                    >注册</van-button
+                  >
                 </div>
               </van-form>
             </div>
           </van-tab>
         </van-tabs>
-        <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
+        <div
+          style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;"
+        >
           <a href="http://hustmaths.top">前往科协首页</a>
         </div>
       </div>
       <div v-if="signStatus" id="game-start">
-        <van-button icon="play" type="default" text="开始游戏" round block></van-button>
-        <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
+        <van-button
+          icon="play"
+          type="default"
+          text="开始游戏"
+          round
+          block
+        ></van-button>
+        <div
+          style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;"
+        >
           <a href="http://hustmaths.top">前往科协首页</a>
         </div>
       </div>
@@ -131,7 +159,7 @@ export default {
       pattern: /U\d{9,}/,
       active: 0,
       signStatus: 1,
-      showError: false,
+      showError: false
     };
   },
   methods: {
@@ -150,7 +178,7 @@ export default {
         title: "游戏简介",
         message: "弹窗内容",
         theme: "round-button",
-        className: "",
+        className: ""
       });
     },
     showInfor() {
@@ -158,16 +186,16 @@ export default {
     },
     showList() {
       this.$router.push("/list");
-    },
+    }
   },
   computed: {
     signAnimate: () => {
       return {
         signIn: this.active == 2,
-        signUp: this.active == 1,
+        signUp: this.active == 1
       };
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

@@ -1,16 +1,16 @@
 import axios from "axios";
 import Qs from "qs";
 
-const request = (config) => {
+const request = config => {
   const instance = axios.create({
     baseURL: "/api/",
     timeout: 10000,
     transformRequest: [
       function(data) {
         return Qs.stringify(data);
-      },
+      }
     ],
-    withCredentials: true,
+    withCredentials: true
   });
   return instance(config);
 };
