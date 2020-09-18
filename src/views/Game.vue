@@ -150,6 +150,7 @@ export default {
         }
       });
     },
+    //FIXME 性能问题
     makeStudent(score = 0, init = false) {
       let made = {};
       if (init) {
