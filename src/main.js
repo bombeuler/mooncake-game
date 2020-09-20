@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import VueRx from "vue-rx";
+import("@/network/mock");
 
 //此处引入组件
 import { Button } from "vant";

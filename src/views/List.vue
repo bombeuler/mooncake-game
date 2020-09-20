@@ -77,8 +77,7 @@ export default {
   methods: {
     onLoad() {
       //获取数据
-      let list;
-      Axios.post("http://localhost/mooncake-game/php/list")
+      Axios.post("/php/list")
         .then(response => {
           let data = response.data;
           // console.log(data);
@@ -149,6 +148,7 @@ export default {
   filter: brightness(1.1);
 }
 
+/*! autoprefixer: off */
 #my-score {
   background-color: transparent;
   width: 80vw;
@@ -165,6 +165,8 @@ export default {
   height: 5vh;
   z-index: 0;
 }
+/* autoprefixer: on */
+
 #my-van-row {
   line-height: 5vh;
   align-items: center;
