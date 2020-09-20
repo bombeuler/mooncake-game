@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="bg">
     <div id="container">
       <div id="infor">
         <div id="avatar">
@@ -8,18 +8,15 @@
         </div>
         <div id="my-infor">
           <div id="my-rank" class="infor">
-            <div>名次</div>
-            1
+            <div>名次</div>1
           </div>
           <hr />
           <div id="my-score-st" class="infor">
-            <div>最高分数</div>
-            9999
+            <div>最高分数</div>9999
           </div>
           <hr />
           <div id="my-credit" class="infor">
-            <div>当前所得积分</div>
-            88
+            <div>当前所得积分</div>88
           </div>
         </div>
       </div>
@@ -46,10 +43,16 @@ export default {
 </script>
 
 <style lang="css" scoped>
+#bg {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: #ffffff url("../../public/bg.png") no-repeat fixed right;
+}
 #container {
   width: 80vw;
   height: 60vh;
-  background-color: gray;
+  background-color: rgba(71, 96, 102, .5);
   margin: 0 auto;
   margin-top: 15vh;
   display: flex;

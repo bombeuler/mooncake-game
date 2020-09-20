@@ -1,11 +1,7 @@
 <template>
   <div>
     <div id="container">
-      <div
-        id="infor"
-        v-if="!signStatus"
-        v-bind:class="[active == 0 ? 'signIn' : 'signUp']"
-      >
+      <div id="infor" v-if="!signStatus" v-bind:class="[active == 0 ? 'signIn' : 'signUp']">
         <van-tabs
           v-model="active"
           background="grey"
@@ -17,11 +13,7 @@
         >
           <van-tab title="登录">
             <div id="signin">
-              <van-form
-                @submit="onSignIn"
-                label-width="30px"
-                :show-error="false"
-              >
+              <van-form @submit="onSignIn" label-width="30px" :show-error="false">
                 <van-field
                   v-model="username"
                   name="name"
@@ -38,20 +30,14 @@
                   :rules="[{ required: true, message: '请填写密码' }]"
                 />
                 <div style="margin: 16px;">
-                  <van-button round block type="default" native-type="submit"
-                    >登录</van-button
-                  >
+                  <van-button round block type="default" native-type="submit">登录</van-button>
                 </div>
               </van-form>
             </div>
           </van-tab>
           <van-tab title="注册">
             <div id="signup">
-              <van-form
-                @submit="onSignUp"
-                label-width="30px"
-                :show-error="false"
-              >
+              <van-form @submit="onSignUp" label-width="30px" :show-error="false">
                 <van-field
                   v-model="stuNum"
                   name="stuNum"
@@ -92,31 +78,19 @@
                   :rules="[{ required: true, message: '请填写密码' }]"
                 />
                 <div style="margin: 16px;">
-                  <van-button round block type="default" native-type="submit"
-                    >注册</van-button
-                  >
+                  <van-button round block type="default" native-type="submit">注册</van-button>
                 </div>
               </van-form>
             </div>
           </van-tab>
         </van-tabs>
-        <div
-          style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;"
-        >
+        <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
           <a href="http://hustmaths.top">前往科协首页</a>
         </div>
       </div>
       <div v-if="signStatus" id="game-start">
-        <van-button
-          icon="play"
-          type="default"
-          text="开始游戏"
-          round
-          block
-        ></van-button>
-        <div
-          style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;"
-        >
+        <van-button icon="play" type="default" text="开始游戏" round block @click="gameStart"></van-button>
+        <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
           <a href="http://hustmaths.top">前往科协首页</a>
         </div>
       </div>
@@ -186,6 +160,9 @@ export default {
     },
     showList() {
       this.$router.push("/list");
+    },
+    gameStart() {
+      this.$router.push("/game");
     }
   },
   computed: {
@@ -200,9 +177,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 a {
-  color: #000000;
+  color: #fff;
 }
 #container {
+  background: #00ff00 url("../../public/bg.png") no-repeat fixed right;
   height: 100vh;
   background-color: rgb(168, 168, 168);
 }
@@ -238,8 +216,7 @@ a {
   position: absolute;
   width: 100%;
   height: 20vh;
-  background-color: grey;
-  opacity: 1;
+  background-color: rgba(128, 128, 128, 0.9);
   z-index: 2;
   bottom: 0;
   border-radius: 20px 20px 0 0;

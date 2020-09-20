@@ -1,14 +1,9 @@
 <template>
-  <div>
+  <div id="bg">
+    <div id="title">排行榜</div>
     <div id="list">
-      <div id="title">排行榜</div>
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="---010---"
-        @load="onLoad"
-      >
-        <li class="list" v-for="(item, index) in list" :key="index">
+      <van-list v-model="loading" :finished="finished" finished-text="---010---" @load="onLoad">
+        <div class="list" v-for="(item, index) in list" :key="index">
           <van-row>
             <van-col span="8">
               <span
@@ -24,8 +19,7 @@
                       : 'list-st'
                   ]
                 ]"
-                >{{ index + 1 }}</span
-              >
+              >{{ index + 1 }}</span>
             </van-col>
             <van-col span="8">
               <span>{{ item.name }}</span>
@@ -39,11 +33,10 @@
               </span>
             </van-col>
           </van-row>
-        </li>
+        </div>
       </van-list>
     </div>
     <div id="my-score">
-      <div></div>
       <van-row id="my-van-row">
         <van-col span="8">
           <span id="my-id">{{ 1 }}</span>
@@ -103,27 +96,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import url("../style/var.scss");
-* {
-  list-style: none;
+#bg {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: #ffffff url("../../public/bg.png") no-repeat fixed right;
 }
 #list {
-  // background-color: grey;
+  background-color: rgb(255, 255, 255, 0.5);
+  width: 80vw;
+  margin: 0 auto;
+  height: 60vh;
+  overflow: scroll;
+}
+
+#title {
+  border-radius: 20px 20px 0 0;
+  background-color: whitesmoke;
   width: 80vw;
   margin: 0 auto;
   margin-top: 10vh;
-  height: 65vh;
-  overflow: scroll;
-}
-#title {
-  background-color: whitesmoke;
   text-align: center;
   padding: 5px 0;
 }
+
 .list {
   margin-top: 6px;
   text-align: center;
 }
+
 .list-id {
   display: inline-block;
   background-color: grey;
@@ -154,22 +155,23 @@ export default {
   width: 80vw;
   height: 5vh;
   margin: 0 auto;
-  z-index: 1;
   text-align: center;
 }
 #my-score > div:nth-child(1) {
   position: fixed;
-  background-color: rgb(218, 214, 214);
-  opacity: 0.5;
+  background-color: rgb(255, 255, 255, 0.8);
   width: 80vw;
   height: 5vh;
   z-index: 0;
+  border-radius: 0 0 20px 20px;
 }
 /* autoprefixer: on */
 
 #my-van-row {
+  color: #000000;
   line-height: 5vh;
   align-items: center;
+  z-index: 3;
 }
 #my-id {
   display: inline-block;
