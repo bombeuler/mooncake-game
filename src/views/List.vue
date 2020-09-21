@@ -148,7 +148,6 @@ export default {
   filter: brightness(1.1);
 }
 
-/*! autoprefixer: off */
 #my-score {
   background-color: transparent;
   width: 80vw;
@@ -165,7 +164,6 @@ export default {
   height: 5vh;
   z-index: 0;
 }
-/* autoprefixer: on */
 
 #my-van-row {
   line-height: 5vh;

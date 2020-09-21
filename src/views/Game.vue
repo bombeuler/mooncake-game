@@ -141,12 +141,14 @@ export default {
       return new Promise((resolve, reject) => {
         // eslint-disable-next-line no-constant-condition
         if (true) {
-          setTimeout(function() {
+          let interId = null;
+          interId = setInterval(function() {
             doSome(argue);
             resolve(argue);
+            clearInterval(interId);
           }, time);
         } else {
-          reject;
+          reject();
         }
       });
     },
@@ -169,24 +171,47 @@ export default {
       if (this.hasSubject.indexOf(false) !== -1) {
         return -1;
       } else {
+        const pHasSubject = this.hasSubject;
+        const pDeadSubjects = this.nowStudent.deadSubjects;
         // eslint-disable-next-line for-direction
-        for (let i = this.hasSubject.length - 1; i >= 0; i++) {
-          for (let j = 0; j < this.nowStudent.deadSubjects.length; j++) {
-            if (this.hasSubject[i] === this.nowStudent.deadSubjects[j]) {
-              flag = i;
+        for (let i = pHasSubject.length - 1; i >= 0; i--) {
+          for (let j = 0; j < pDeadSubjects.length; j++) {
+            if (pHasSubject[i] === pDeadSubjects[j].subject) {
+              flag = [i, j];
+              console.log("yu");
               break;
             }
           }
-          if (flag !== false) {
+          //FIXME 多次
+          if (flag === "boolean") {
             break;
           }
         }
         return flag;
       }
     },
+    isEnough() {
+      if (this.sugar >= this.nowStudent.sugarNeed && this.dough >= 1) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     makeCake() {
       //TODO 点击学生事件
       console.log(this.diffSubject());
+      if (
+        this.diffSubject() !== false &&
+        this.diffSubject() !== -1 &&
+        this.isEnough()
+      ) {
+        const flg = this.diffSubject();
+        console.log(flg);
+        this.sugar -= this.nowStudent.sugarNeed;
+        this.dough--;
+        this.nowStudent.deadSubjects[flg[1]].eatAdd += 10;
+        this.hasSubject.splice(flg[0], 1);
+      }
     }
   },
   created() {},
@@ -198,8 +223,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import url("../style/var.scss");
-
 @mixin flex-normal($direct) {
   display: flex;
   flex-direction: $direct;
