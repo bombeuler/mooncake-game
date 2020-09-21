@@ -22,10 +22,10 @@
               >{{ index + 1 }}</span>
             </van-col>
             <van-col span="8">
-              <span>{{ item.name }}</span>
+              <span>{{ item.nick }}</span>
             </van-col>
             <van-col span="8">
-              <span>{{ item.score }}</span>
+              <span>{{ item.intergral }}</span>
               <span>
                 <van-icon v-if="index + 1 == 1" name="award" color="yellow" />
                 <van-icon v-if="index + 1 == 2" name="award" color="blue" />
@@ -39,13 +39,13 @@
     <div id="my-score">
       <van-row id="my-van-row">
         <van-col span="8">
-          <span id="my-id">{{ 1 }}</span>
+          <span id="my-id">{{ rank }}</span>
         </van-col>
         <van-col span="8">
-          <span>{{ "cyc" }}</span>
+          <span>{{ name }}</span>
         </van-col>
         <van-col span="8">
-          <span>{{ "9999" }}</span>
+          <span>{{ intergral }}</span>
         </van-col>
       </van-row>
     </div>
@@ -63,6 +63,10 @@ export default {
   data() {
     return {
       list: [],
+      rank: "",
+      intergral: "",
+      name: localStorage.nick,
+      begin: 0,
       loading: false,
       finished: false
     };
@@ -70,11 +74,23 @@ export default {
   methods: {
     onLoad() {
       //获取数据
-      Axios.post("/php/list")
+      Axios({
+        method: "post",
+        url: "http://localhost/mooncake-game/php/ranklist",
+        data: {
+          begin: this.begin
+        }
+      })
         .then(response => {
           let data = response.data;
-          // console.log(data);
-          this.list = this.list.concat(data);
+          console.log(data);
+          if (data.status === 404) {
+            this.finished = true;
+            return;
+          } else if (data.status === 200) {
+            this.list = this.list.concat(data.res);
+            this.begin = this.list.length;
+          }
         })
         .catch(function(error) {
           console.log(error);
@@ -82,15 +98,28 @@ export default {
       //渲染列表
       setTimeout(() => {
         this.loading = false;
-
-        if (this.list.length >= 100) {
-          this.finished = true;
-        }
-      }, 3000);
+      }, 1000);
     },
     backToHome() {
       this.$router.push("/home");
     }
+  },
+  created() {
+    let nick = this.name;
+    Axios({
+      method: "post",
+      url: "http://localhost/mooncake-game/php/infor",
+      data: {
+        nick
+      }
+    }).then(response => {
+      let data = response.data;
+      console.log(data);
+      if (data.status == 200) {
+        this.rank = data.rank;
+        this.intergral = data.intergral;
+      }
+    });
   }
 };
 </script>
@@ -101,6 +130,7 @@ export default {
   height: 100vh;
   width: 100vw;
   background: #ffffff url("../../public/bg.png") no-repeat fixed right;
+  background-size: cover;
 }
 #list {
   background-color: rgb(255, 255, 255, 0.5);
