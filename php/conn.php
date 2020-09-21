@@ -8,12 +8,9 @@ class db
     private $DB_USER = "mooncake_game";
     private $DB_PASSWORD = "ZDGtBPrcT6rZKrzA";
     private $DB_NAME = "mooncake_game";
-    private $DB_PORT = 3308;
+    private $DB_PORT = 888;
     private $_db;
 
-    private static $tb_img_url = null;
-    private static $tb_page_url = null;
-    private static $table_name = null;
     private static $instance = null;
 
 
