@@ -1,7 +1,11 @@
 <template>
   <div>
     <div id="container">
-      <div id="infor" v-if="!signStatus" v-bind:class="[active == 0 ? 'signIn' : 'signUp']">
+      <div
+        id="infor"
+        v-if="!signStatus"
+        v-bind:class="[active == 0 ? 'signIn' : 'signUp']"
+      >
         <van-tabs
           v-model="active"
           background="rgba(255, 255, 255,.1)"
@@ -12,7 +16,11 @@
         >
           <van-tab title="登录">
             <div id="signin">
-              <van-form @submit="onSignIn" label-width="30px" :show-error="false">
+              <van-form
+                @submit="onSignIn"
+                label-width="30px"
+                :show-error="false"
+              >
                 <van-field
                   v-model="username"
                   name="nick"
@@ -29,14 +37,20 @@
                   :rules="[{ required: true, message: '请填写密码' }]"
                 />
                 <div style="margin: 16px;">
-                  <van-button round block type="default" native-type="submit">登录</van-button>
+                  <van-button round block type="default" native-type="submit"
+                    >登录</van-button
+                  >
                 </div>
               </van-form>
             </div>
           </van-tab>
           <van-tab title="注册">
             <div id="signup">
-              <van-form @submit="onSignUp" label-width="30px" :show-error="false">
+              <van-form
+                @submit="onSignUp"
+                label-width="30px"
+                :show-error="false"
+              >
                 <van-field
                   v-model="stuNum"
                   name="uid"
@@ -44,7 +58,11 @@
                   placeholder="U202001010"
                   maxlength="10"
                   :rules="[
-                    { required: true, pattern: uidPattern, message: '请输入正确学号' }
+                    {
+                      required: true,
+                      pattern: uidPattern,
+                      message: '请输入正确学号'
+                    }
                   ]"
                 />
                 <van-field
@@ -61,7 +79,13 @@
                   label="电话"
                   maxlength="11"
                   placeholder
-                  :rules="[{ required: true, pattern: phonePattern, message: '请填写电话' }]"
+                  :rules="[
+                    {
+                      required: true,
+                      pattern: phonePattern,
+                      message: '请填写电话'
+                    }
+                  ]"
                 />
                 <van-field
                   v-model="username"
@@ -79,19 +103,32 @@
                   :rules="[{ required: true, message: '请填写密码' }]"
                 />
                 <div style="margin: 16px;">
-                  <van-button round block type="default" native-type="submit">注册</van-button>
+                  <van-button round block type="default" native-type="submit"
+                    >注册</van-button
+                  >
                 </div>
               </van-form>
             </div>
           </van-tab>
         </van-tabs>
-        <div style="text-align:center;font-size:12px;font-weight:400;margin-bottom:12px;">
+        <div
+          style="text-align:center;font-size:12px;font-weight:400;margin-bottom:12px;"
+        >
           <a href="http://hustmaths.top" style="color: #000;">前往科协首页</a>
         </div>
       </div>
       <div v-if="signStatus" id="game-start">
-        <van-button icon="play" type="default" text="开始游戏" round block @click="gameStart"></van-button>
-        <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
+        <van-button
+          icon="play"
+          type="default"
+          text="开始游戏"
+          round
+          block
+          @click="gameStart"
+        ></van-button>
+        <div
+          style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;"
+        >
           <a href="http://hustmaths.top">前往科协首页</a>
         </div>
       </div>
@@ -229,7 +266,7 @@ export default {
   created() {
     if (sessionStorage.signStatus == 1) {
       this.signStatus = sessionStorage.signStatus;
-      return ;
+      return;
     }
     if (localStorage.nick !== undefined) {
       let nick = localStorage.nick;
@@ -258,7 +295,7 @@ export default {
             message: "登录成功"
           });
           sessionStorage.signStatus = 1;
-          this.signStatus=sessionStorage.signStatus;
+          this.signStatus = sessionStorage.signStatus;
         }
       });
     }
