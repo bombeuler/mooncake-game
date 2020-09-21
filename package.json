@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.20.0",
+    "blueimp-md5": "^2.18.0",
     "core-js": "^3.6.5",
     "lodash": "^4.17.20",
     "qs": "^6.9.4",
