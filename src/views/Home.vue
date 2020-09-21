@@ -246,7 +246,7 @@ export default {
         }
       }).then(response => {
         let data = response.data;
-        // console.log(response, data);
+        console.log(response, data);
         if (data.status !== 200) {
           Notify(data.msg);
           if (data.msg === "该用户不存在") {
