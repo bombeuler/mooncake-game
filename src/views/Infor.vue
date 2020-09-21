@@ -1,31 +1,29 @@
 <template>
-  <div>
+  <div id="bg">
     <div id="container">
       <div id="infor">
         <div id="avatar">
           <div id="avatar-img"></div>
-          <div id="avatar-name">cyc</div>
+          <div id="avatar-name">{{name}}</div>
         </div>
         <div id="my-infor">
           <div id="my-rank" class="infor">
             <div>名次</div>
-            1
+            {{rank}}
           </div>
           <hr />
           <div id="my-score-st" class="infor">
-            <div>最高分数</div>
-            9999
+            <div>最高分数</div>9999
           </div>
           <hr />
           <div id="my-credit" class="infor">
-            <div>当前所得积分</div>
-            88
+            <div>当前所得积分</div>{{intergral}}
           </div>
         </div>
       </div>
       <div id="rule">积分计算规则</div>
       <div id="logout">
-        <van-button color="skyblue" round size="large">退出登录</van-button>
+        <van-button color="skyblue" round size="large" @click="logout">退出登录</van-button>
       </div>
       <div id="arrow-back" v-on:click="backToHome">
         <van-icon name="arrow-left" size="20" />
@@ -35,21 +33,59 @@
 </template>
 
 <script>
+import Axios from "axios";
 export default {
   name: "Infor",
+  data() {
+    return {
+      name: localStorage.nick,
+      rank: '',
+      intergral:''
+    };
+  },
   methods: {
     backToHome() {
       this.$router.push("/home");
+    },
+    logout() {
+      localStorage.clear();
+      sessionStorage.signStatus = 0;
+      this.$router.push("/home");
     }
+  },
+  created() {
+    console.log(localStorage.nick, this.name);
+    let nick = this.name;
+    Axios({
+      method: "post",
+      url: "http://localhost/mooncake-game/php/infor",
+      data: {
+        nick
+      }
+    }).then(response => {
+      let data = response.data;
+      console.log(data);
+      if (data.status == 200) {
+        this.rank = data.rank;
+        this.intergral=data.intergral;
+      }
+    });
   }
 };
 </script>
 
 <style lang="css" scoped>
+#bg {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: #ffffff url("../../public/bg.png") no-repeat fixed right;
+  background-size: cover;
+}
 #container {
   width: 80vw;
   height: 60vh;
-  background-color: gray;
+  background-color: rgba(71, 96, 102, 0.5);
   margin: 0 auto;
   margin-top: 15vh;
   display: flex;

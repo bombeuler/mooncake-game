@@ -1,30 +1,21 @@
 <template>
   <div>
     <div id="container">
-      <div
-        id="infor"
-        v-if="!signStatus"
-        v-bind:class="[active == 0 ? 'signIn' : 'signUp']"
-      >
+      <div id="infor" v-if="!signStatus" v-bind:class="[active == 0 ? 'signIn' : 'signUp']">
         <van-tabs
           v-model="active"
-          background="grey"
+          background="rgba(255, 255, 255,.1)"
           swipeable
           animated
-          color="white"
-          title-active-color="white"
-          @change="onChange"
+          color="grey"
+          title-active-color="black"
         >
           <van-tab title="登录">
             <div id="signin">
-              <van-form
-                @submit="onSignIn"
-                label-width="30px"
-                :show-error="false"
-              >
+              <van-form @submit="onSignIn" label-width="30px" :show-error="false">
                 <van-field
                   v-model="username"
-                  name="name"
+                  name="nick"
                   label="昵称"
                   placeholder
                   :rules="[{ required: true, message: '请填写昵称' }]"
@@ -38,32 +29,27 @@
                   :rules="[{ required: true, message: '请填写密码' }]"
                 />
                 <div style="margin: 16px;">
-                  <van-button round block type="default" native-type="submit"
-                    >登录</van-button
-                  >
+                  <van-button round block type="default" native-type="submit">登录</van-button>
                 </div>
               </van-form>
             </div>
           </van-tab>
           <van-tab title="注册">
             <div id="signup">
-              <van-form
-                @submit="onSignUp"
-                label-width="30px"
-                :show-error="false"
-              >
+              <van-form @submit="onSignUp" label-width="30px" :show-error="false">
                 <van-field
                   v-model="stuNum"
-                  name="stuNum"
+                  name="uid"
                   label="学号"
                   placeholder="U202001010"
+                  maxlength="10"
                   :rules="[
-                    { required: true, pattern, message: '请输入正确学号' }
+                    { required: true, pattern: uidPattern, message: '请输入正确学号' }
                   ]"
                 />
                 <van-field
                   v-model="realName"
-                  name="real-name"
+                  name="name"
                   label="真名"
                   placeholder="阿尔托莉雅"
                   :rules="[{ required: true, message: '请填写真名' }]"
@@ -73,12 +59,13 @@
                   name="tel"
                   type="tel"
                   label="电话"
+                  maxlength="11"
                   placeholder
-                  :rules="[{ required: true, message: '请填写电话' }]"
+                  :rules="[{ required: true, pattern: phonePattern, message: '请填写电话' }]"
                 />
                 <van-field
                   v-model="username"
-                  name="name"
+                  name="nick"
                   label="昵称"
                   placeholder="可可爱爱的pp"
                   :rules="[{ required: true, message: '请填写昵称' }]"
@@ -92,31 +79,19 @@
                   :rules="[{ required: true, message: '请填写密码' }]"
                 />
                 <div style="margin: 16px;">
-                  <van-button round block type="default" native-type="submit"
-                    >注册</van-button
-                  >
+                  <van-button round block type="default" native-type="submit">注册</van-button>
                 </div>
               </van-form>
             </div>
           </van-tab>
         </van-tabs>
-        <div
-          style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;"
-        >
-          <a href="http://hustmaths.top">前往科协首页</a>
+        <div style="text-align:center;font-size:12px;font-weight:400;margin-bottom:12px;">
+          <a href="http://hustmaths.top" style="color: #000;">前往科协首页</a>
         </div>
       </div>
       <div v-if="signStatus" id="game-start">
-        <van-button
-          icon="play"
-          type="default"
-          text="开始游戏"
-          round
-          block
-        ></van-button>
-        <div
-          style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;"
-        >
+        <van-button icon="play" type="default" text="开始游戏" round block @click="gameStart"></van-button>
+        <div style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;">
           <a href="http://hustmaths.top">前往科协首页</a>
         </div>
       </div>
@@ -147,6 +122,10 @@
 </template>
 <script>
 import { Dialog } from "vant";
+import Axios from "axios";
+import md5 from "blueimp-md5";
+import { Notify } from "vant";
+
 export default {
   name: "Home",
   data() {
@@ -156,22 +135,70 @@ export default {
       stuNum: "",
       realName: "",
       tel: "",
-      pattern: /U\d{9,}/,
+      uidPattern: /U\d{9,}/,
+      phonePattern: /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/,
       active: 0,
-      signStatus: 1,
+      signStatus: 0,
       showError: false
     };
   },
   methods: {
     onSignIn(values) {
-      console.log("submit", values);
-      this.signStatus = 1;
+      values.password = md5(values.password);
+      Axios({
+        method: "post",
+        url: "http://localhost/mooncake-game/php/signin",
+        data: {
+          values
+        }
+      }).then(response => {
+        let data = response.data;
+        // console.log(response, data);
+        if (data.status !== 200) {
+          Notify(data.msg);
+          if (data.msg === "该用户不存在") {
+            this.active = 1;
+          }
+        } else {
+          Notify({
+            type: "success",
+            message: "登录成功"
+          });
+          sessionStorage.signStatus = 1;
+          localStorage.nick = values.nick;
+          localStorage.password = values.password;
+
+          this.signStatus = sessionStorage.signStatus;
+        }
+      });
+
+      // console.log("submit", values);
     },
+
     onSignUp(values) {
-      console.log("submit", values);
-    },
-    onChange(values) {
-      console.log(values, this.active);
+      values.password = md5(values.password);
+      Axios({
+        method: "post",
+        url: "http://localhost/mooncake-game/php/signup",
+        data: {
+          values
+        }
+      })
+        .then(response => {
+          let data = response.data;
+          // console.log(data);
+          if (data.status !== 200) {
+            Notify(data.msg);
+            return;
+          } else {
+            Notify({ type: "success", message: "注册成功" });
+            this.active = 0;
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      // console.log("submit", values);
     },
     showIntro() {
       Dialog.alert({
@@ -186,6 +213,9 @@ export default {
     },
     showList() {
       this.$router.push("/list");
+    },
+    gameStart() {
+      this.$router.push("/game");
     }
   },
   computed: {
@@ -195,14 +225,58 @@ export default {
         signUp: this.active == 1
       };
     }
+  },
+  created() {
+    if (sessionStorage.signStatus == 1) {
+      this.signStatus = sessionStorage.signStatus;
+      return ;
+    }
+    if (localStorage.nick !== undefined) {
+      let nick = localStorage.nick;
+      let password = localStorage.password;
+      let values = {
+        nick,
+        password
+      };
+      Axios({
+        method: "post",
+        url: "http://localhost/mooncake-game/php/signin",
+        data: {
+          values
+        }
+      }).then(response => {
+        let data = response.data;
+        // console.log(response, data);
+        if (data.status !== 200) {
+          Notify(data.msg);
+          if (data.msg === "该用户不存在") {
+            this.active = 1;
+          }
+        } else {
+          Notify({
+            type: "success",
+            message: "登录成功"
+          });
+          sessionStorage.signStatus = 1;
+          this.signStatus=sessionStorage.signStatus;
+        }
+      });
+    }
+    // console.log(localStorage);
   }
 };
 </script>
 <style lang="scss" scoped>
 a {
-  color: #000000;
+  color: #fff;
 }
+.van-field__label {
+  color: white !important;
+}
+
 #container {
+  background: #00ff00 url("../../public/bg.png") no-repeat fixed right;
+  background-size: cover;
   height: 100vh;
   background-color: rgb(168, 168, 168);
 }
@@ -213,7 +287,7 @@ a {
   width: 90%;
   padding-top: 30px;
   border-radius: 30px;
-  background-color: grey;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 .signIn {
   top: 30%;
@@ -228,18 +302,19 @@ a {
   margin: 0 auto;
   margin-top: 5px;
   width: 90%;
+  color: white !important;
 }
 .van-cell {
   color: #ffffff !important;
-  background-color: grey;
+  background-color: rgba(255, 255, 255, 0.1);
+  // background-color: grey;
 }
 
 #others {
   position: absolute;
   width: 100%;
   height: 20vh;
-  background-color: grey;
-  opacity: 1;
+  background-color: rgba(128, 128, 128, 0.9);
   z-index: 2;
   bottom: 0;
   border-radius: 20px 20px 0 0;
