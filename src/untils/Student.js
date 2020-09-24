@@ -1,16 +1,6 @@
 import { shuffle } from "lodash";
-const MAX = 15;
-const MIN = 5;
-const RADNUM = 3;
-const Just0to1 = x => Math.exp(-x);
-const subLists = new Map([
-  ["m0", "数学分析"],
-  ["m1", "高等代数"],
-  ["m2", "实变函数"],
-  ["m3", "复变函数"],
-  ["m4", "近世代数"],
-  ["m5", "概率论"]
-]);
+import { MAX, MIN, RADNUM, Just0to1, subLists } from "./game.config";
+
 class Student {
   static subLists = subLists;
   constructor(score = 0, isFirst = false) {
@@ -59,4 +49,4 @@ class Student {
   }
 }
 
-export { Student, MIN };
+export default Student;

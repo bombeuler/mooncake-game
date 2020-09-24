@@ -29,40 +29,58 @@
       </van-row>
       <van-row class="middle">
         <div class="main-food">
-          <van-image
-            @click="plusItem('sugar', sugarMax)"
-            fit="contain"
-            width="13.8vw"
-            :src="require('../assets/sugar.png')"
-          />
-          <van-image
-            @click="plusItem('dough', doughMax)"
-            fit="contain"
-            width="15.7vw"
-            :src="require('../assets/dough.png')"
-          />
-          <van-image
-            @click="deleteSubject"
-            fit="contain"
-            width="12.3vw"
-            :src="require('../assets/trash.png')"
-          />
+          <div class="food-item">
+            <van-image
+              @click="plusItem('sugar', sugarMax)"
+              fit="contain"
+              width="13.8vw"
+              :src="require('../assets/sugar.png')"
+            />
+            <span class="food-text">烧糖&nbsp;&nbsp;{{ sugar }}</span>
+          </div>
+          <div class="food-item">
+            <van-image
+              @click="plusItem('dough', doughMax)"
+              fit="contain"
+              width="15.7vw"
+              :src="require('../assets/dough.png')"
+            />
+            <span class="food-text">面团&nbsp;&nbsp;{{ dough }}</span>
+          </div>
+          <div class="food-item">
+            <van-image
+              @click="deleteSubject"
+              fit="contain"
+              width="12.3vw"
+              :src="require('../assets/trash.png')"
+            />
+            <span class="food-text">垃圾桶&nbsp;&nbsp;{{ trashNumber }}</span>
+          </div>
         </div>
-        <div class="student" @click="makeCake">
-          <div class="notice">{{ notice }}</div>
-          <img
-            class="people"
-            src="https://dummyimage.com/300x300.png?text=student"
-          />
-          <div class="stuList">
-            <div
-              v-for="sub in nowStudent.deadSubjects"
-              :key="sub.subject"
-              class="grade-group"
-              :style="`background-image:${progressNum(sub)}`"
-            >
-              <span>{{ subValue(sub.subject) }}</span>
-              <span>{{ sub.grade }}</span>
+        <div class="student-out">
+          <div class="student" @click="makeCake">
+            <div class="notice">{{ notice }}</div>
+            <div class="people-box">
+              <van-image
+                class="people"
+                :src="require('@/assets/student.png')"
+                width="70%"
+              />
+            </div>
+            <div class="sugar-need-box">
+              <span>所需烧糖数量</span>
+              <span>{{ this.nowStudent.sugarNeed }}</span>
+            </div>
+            <div class="stuList">
+              <div
+                v-for="sub in nowStudent.deadSubjects"
+                :key="sub.subject"
+                class="grade-group"
+                :style="`background-image:${progressNum(sub)}`"
+              >
+                <span>{{ subValue(sub.subject) }}</span>
+                <span>{{ sub.grade }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -73,6 +91,8 @@
             v-for="subject in subjectOut1"
             :key="subject.key"
             @click="plusSubject(subject.key)"
+            class="subject-button"
+            color="#2c2c2c"
             >{{ subject.name }}</van-button
           >
         </div>
@@ -81,6 +101,8 @@
             v-for="subject in subjectOut2"
             :key="subject.key"
             @click="plusSubject(subject.key)"
+            class="subject-button"
+            color="#2c2c2c"
             >{{ subject.name }}</van-button
           >
         </div>
@@ -90,12 +112,16 @@
 </template>
 
 <script>
-import { Student, MIN } from "../untils/Student";
-
-const badPage = 0.02;
-const subjectMax = 5;
-const scoreStep = 10;
-const scoreExtend = 6;
+import Student from "../untils/Student";
+import {
+  MIN,
+  badPage,
+  subjectMax,
+  scoreStep,
+  scoreExtend,
+  sugarMaxN,
+  doughMaxN
+} from "../untils/game.config";
 
 export default {
   name: "Game",
@@ -103,19 +129,20 @@ export default {
     return {
       notice: "",
       progressColor: "#ecc02c",
+      trashNumber: 0,
       firstTime: null,
       firstPeopleTime: null,
       endTime: null,
       endPeopleTime: null,
       cleanTimeout: false,
-      name: "我是谁，8个字符",
+      name: "我是谁，",
       life: 3,
       isAlive: true,
       score: 0,
       sugar: 0,
-      sugarMax: 25,
+      sugarMax: sugarMaxN,
       dough: 0,
-      doughMax: 25,
+      doughMax: doughMaxN,
       nowStudent: new Student(0, true),
       hasSubject: [],
       subjects: [
@@ -133,7 +160,7 @@ export default {
       return sub =>
         `linear-gradient(to right,${this.progressColor} ${parseInt(
           (sub.eatAdd / sub.grade) * 100
-        )}%, #ef4971 0px)`;
+        )}%, #b2bec3 0px)`;
     },
     subValue() {
       return subjectKey => Student.subLists.get(subjectKey);
@@ -193,9 +220,10 @@ export default {
       ) {
         this.score += scoreExtend;
       }
-      this.score += step;
+      this.score += step * this.nowStudent.subjectsNum;
     },
     deleteSubject() {
+      this.trashNumber += this.hasSubject.length;
       this.hasSubject.splice(0, this.hasSubject.length);
     },
     async timeInterval(todo, time = 1, interval = 1000) {
@@ -238,11 +266,12 @@ export default {
         this.notice = `还剩${(made.deadTime - t).toString()}秒`;
         if (made.deadTime - t <= 0) {
           console.log(t);
-          if (this.life > 0) {
+          if (this.life > 1) {
             this.life--;
             this.plusScore(0);
             this.makeStudent(this.score);
           } else {
+            this.life--;
             this.cleanTimeout = true;
             this.endTime = new Date().getTime();
             this.isAlive = false;
@@ -308,6 +337,9 @@ export default {
 $birthRed: #ef4971;
 $sadBlue: #40eaff;
 $bombYellow: #ecc02c;
+$onechoBlue: #0d4f89;
+$borderColor: #ffe9d1;
+$studWidth: 90%;
 
 @mixin flex-normal($direct) {
   display: flex;
@@ -384,7 +416,6 @@ $bombYellow: #ecc02c;
       width: fit-content;
       font: {
         size: 8.5vw;
-        family: arual;
       }
     }
     .life-box {
@@ -403,49 +434,78 @@ $bombYellow: #ecc02c;
       grow: 1;
       shrink: 0;
     }
-    margin: {
-      top: 4vh;
-      bottom: 4vh;
-    }
     .main-food {
       width: 40vw;
       min-height: 50vh;
       @include flex-normal(column);
+      .food-item {
+        @include flex-normal(column);
+        .food-text {
+          margin-top: 6px;
+          color: $bombYellow;
+        }
+      }
     }
-    .student {
-      background-color: #fff;
-      margin: 0 auto;
-      width: 50vw;
-      min-height: 50vh;
-      @include flex-normal(column);
-      @include border-normal(0);
-      .notice {
-        width: 100%;
-        height: 10%;
-        @include border-normal(top);
-        text-align: center;
-      }
-      .people {
-        width: 100%;
-      }
-      .stuList {
-        width: 100%;
-        .grade-group {
-          width: 100%;
-          @include flex-normal(row);
-          user-select: none;
-          overflow: hidden;
-          padding: {
-            top: 2px;
-            bottom: 2px;
+    .student-out {
+      background-color: $onechoBlue;
+      .student {
+        background-color: $onechoBlue;
+        margin: 0 auto;
+        width: 50vw;
+        min-height: 50vh;
+        margin: {
+          left: 10px;
+          right: 10px;
+          top: 5px;
+          bottom: 5px;
+        }
+        @include flex-normal(column);
+        border: {
+          style: solid;
+          color: $borderColor;
+          size: 4px;
+        }
+        .notice {
+          width: 90%;
+          height: 10%;
+          background-color: $bombYellow;
+          text-align: center;
+        }
+        .people-box {
+          width: 90%;
+          background-color: #2c2c2c;
+          @include flex-normal(column);
+          .people {
+            margin: 0 auto;
+            width: 75%;
+            height: 100%;
           }
-          @include border-normal(top);
+        }
+
+        .sugar-need-box {
+          @include flex-normal(row);
+          background-color: $birthRed;
+          width: $studWidth;
+        }
+        .stuList {
+          width: 100%;
+          .grade-group {
+            width: $studWidth;
+            margin: 0 auto;
+            margin: {
+              top: 5px;
+              bottom: 5px;
+            }
+            @include flex-normal(row);
+            user-select: none;
+            overflow: hidden;
+          }
         }
       }
     }
   }
   .bottom {
-    height: 25vh;
+    height: 55vw;
     width: 100vw;
     display: flex;
     justify-content: space-around;
@@ -456,6 +516,10 @@ $bombYellow: #ecc02c;
     }
     .subject-group {
       @include flex-normal(row);
+      .subject-button {
+        width: 24vw;
+        height: 20vw;
+      }
     }
   }
 }
