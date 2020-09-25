@@ -5,10 +5,10 @@ namespace conn;
 class db
 {
     private $DB_HOST = "localhost";
-    private $DB_USER = "mooncake_game";
-    private $DB_PASSWORD = "ZDGtBPrcT6rZKrzA";
+    private $DB_USER = "root";
+    private $DB_PASSWORD = "";
     private $DB_NAME = "mooncake_game";
-    private $DB_PORT = 888;
+    private $DB_PORT = 3306;
     private $_db;
 
     private static $instance = null;

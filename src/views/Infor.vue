@@ -4,26 +4,30 @@
       <div id="infor">
         <div id="avatar">
           <div id="avatar-img"></div>
-          <div id="avatar-name">{{name}}</div>
+          <div id="avatar-name">{{ name }}</div>
         </div>
         <div id="my-infor">
           <div id="my-rank" class="infor">
             <div>名次</div>
-            {{rank}}
+            {{ rank }}
           </div>
           <hr />
           <div id="my-score-st" class="infor">
-            <div>最高分数</div>9999
+            <div>最高分数</div>
+            9999
           </div>
           <hr />
           <div id="my-credit" class="infor">
-            <div>当前所得积分</div>{{intergral}}
+            <div>当前所得积分</div>
+            {{ intergral }}
           </div>
         </div>
       </div>
       <div id="rule">积分计算规则</div>
       <div id="logout">
-        <van-button color="skyblue" round size="large" @click="logout">退出登录</van-button>
+        <van-button color="skyblue" round size="large" @click="logout"
+          >退出登录</van-button
+        >
       </div>
       <div id="arrow-back" v-on:click="backToHome">
         <van-icon name="arrow-left" size="20" />
@@ -39,8 +43,8 @@ export default {
   data() {
     return {
       name: localStorage.nick,
-      rank: '',
-      intergral:''
+      rank: "",
+      intergral: ""
     };
   },
   methods: {
@@ -58,7 +62,7 @@ export default {
     let nick = this.name;
     Axios({
       method: "post",
-      url: "http://localhost/mooncake-game/php/infor",
+      url: "/mooncake-game/php/infor.php",
       data: {
         nick
       }
@@ -67,7 +71,7 @@ export default {
       console.log(data);
       if (data.status == 200) {
         this.rank = data.rank;
-        this.intergral=data.intergral;
+        this.intergral = data.intergral;
       }
     });
   }

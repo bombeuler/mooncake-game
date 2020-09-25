@@ -2,7 +2,12 @@
   <div id="bg">
     <div id="title">排行榜</div>
     <div id="list">
-      <van-list v-model="loading" :finished="finished" finished-text="---010---" @load="onLoad">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="---010---"
+        @load="onLoad"
+      >
         <div class="list" v-for="(item, index) in list" :key="index">
           <van-row>
             <van-col span="8">
@@ -19,7 +24,8 @@
                       : 'list-st'
                   ]
                 ]"
-              >{{ index + 1 }}</span>
+                >{{ index + 1 }}</span
+              >
             </van-col>
             <van-col span="8">
               <span>{{ item.nick }}</span>
@@ -76,7 +82,7 @@ export default {
       //获取数据
       Axios({
         method: "post",
-        url: "http://localhost/mooncake-game/php/ranklist",
+        url: "/mooncake-game/php/ranklist.php",
         data: {
           begin: this.begin
         }
@@ -108,7 +114,7 @@ export default {
     let nick = this.name;
     Axios({
       method: "post",
-      url: "http://localhost/mooncake-game/php/infor",
+      url: "/mooncake-game/php/infor.php",
       data: {
         nick
       }
