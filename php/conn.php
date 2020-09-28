@@ -7,7 +7,7 @@ class db
     private $DB_HOST = "localhost";
     private $DB_USER = "root";
     private $DB_PASSWORD = "";
-    private $DB_NAME = "mooncake_game";
+    private $DB_NAME = "hustmaths";
     private $DB_PORT = 3306;
     private $_db;
 

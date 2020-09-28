@@ -2,38 +2,85 @@
 <template>
   <div>
     <main class="game">
-      <van-row type="flex" class="top" justify="start" align="center">
-        <van-col span="8" offset="2">{{ name }}</van-col>
-        <van-col span="4" offset="1" class="my-score"
-          >{{ sugar }}+{{ dough }}</van-col
+      <van-row type="flex" class="top" justify="space-around" align="center">
+        <van-col class="user-box">
+          <van-image
+            width="5.4vw"
+            :src="require('./../assets/user_icon.png')"
+            class="icon-box"
+          />
+          <span class="user-name"> {{ name }}</span></van-col
         >
-        <van-col span="7">剩余机会：{{ score }}</van-col>
+        <van-col span="4"
+          ><div class="my-score">{{ score }}</div></van-col
+        >
+        <van-col span="8" class="life-box"
+          ><van-rate
+            icon="like"
+            size="8vw"
+            readonly
+            count="3"
+            v-model="life"
+            void-icon="like"
+            :touchable="false"
+            void-color="#dfe6e9"
+            color="#ef4971"
+        /></van-col>
       </van-row>
       <van-row class="middle">
         <div class="main-food">
-          <van-button @click="plusItem('sugar', 15)">烧糖</van-button>
-          <van-button @click="plusItem('dough', 15)">面</van-button>
-          <van-button @click="deleteSubject">垃圾桶</van-button>
+          <div class="food-item">
+            <van-image
+              @click="plusItem('sugar', sugarMax)"
+              fit="contain"
+              width="13.8vw"
+              :src="require('../assets/sugar.png')"
+            />
+            <span class="food-text">烧糖&nbsp;&nbsp;{{ sugar }}</span>
+          </div>
+          <div class="food-item">
+            <van-image
+              @click="plusItem('dough', doughMax)"
+              fit="contain"
+              width="15.7vw"
+              :src="require('../assets/dough.png')"
+            />
+            <span class="food-text">面团&nbsp;&nbsp;{{ dough }}</span>
+          </div>
+          <div class="food-item">
+            <van-image
+              @click="deleteSubject"
+              fit="contain"
+              width="12.3vw"
+              :src="require('../assets/trash.png')"
+            />
+            <span class="food-text">垃圾桶&nbsp;&nbsp;{{ trashNumber }}</span>
+          </div>
         </div>
-        <div class="student" @click="makeCake">
-          <div class="notice">{{ notice }}</div>
-          <img
-            class="people"
-            src="https://dummyimage.com/300x300.png?text=student"
-          />
-          <div class="stuList">
-            <div
-              v-for="sub in nowStudent.deadSubjects"
-              :key="sub.subject"
-              class="grade-group"
-              :background-image="
-                `linear-gradient(to right,${progressColor} ${parseInt(
-                  (sub.eatAdd / sub.grade) * 100
-                )}%, white 0px)`
-              "
-            >
-              <span>{{ subValue(sub.subject) }}</span>
-              <span>{{ sub.grade }}</span>
+        <div class="student-out">
+          <div class="student" @click="makeCake">
+            <div class="notice">{{ notice }}</div>
+            <div class="people-box">
+              <van-image
+                class="people"
+                :src="require('@/assets/student.png')"
+                width="70%"
+              />
+            </div>
+            <div class="sugar-need-box">
+              <span>所需烧糖数量</span>
+              <span>{{ this.nowStudent.sugarNeed }}</span>
+            </div>
+            <div class="stuList">
+              <div
+                v-for="sub in nowStudent.deadSubjects"
+                :key="sub.subject"
+                class="grade-group"
+                :style="`background-image:${progressNum(sub)}`"
+              >
+                <span>{{ subValue(sub.subject) }}</span>
+                <span>{{ sub.grade }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -44,6 +91,8 @@
             v-for="subject in subjectOut1"
             :key="subject.key"
             @click="plusSubject(subject.key)"
+            class="subject-button"
+            color="#2c2c2c"
             >{{ subject.name }}</van-button
           >
         </div>
@@ -52,6 +101,8 @@
             v-for="subject in subjectOut2"
             :key="subject.key"
             @click="plusSubject(subject.key)"
+            class="subject-button"
+            color="#2c2c2c"
             >{{ subject.name }}</van-button
           >
         </div>
@@ -62,21 +113,36 @@
 
 <script>
 import Student from "../untils/Student";
-
-const badPage = 0.05;
+import {
+  MIN,
+  badPage,
+  subjectMax,
+  scoreStep,
+  scoreExtend,
+  sugarMaxN,
+  doughMaxN
+} from "../untils/game.config";
 
 export default {
   name: "Game",
   data() {
     return {
       notice: "",
-      progressColor: "#e67e22",
+      progressColor: "#ecc02c",
+      trashNumber: 0,
       firstTime: null,
+      firstPeopleTime: null,
       endTime: null,
-      name: "BOMB",
-      score: 34,
+      endPeopleTime: null,
+      cleanTimeout: false,
+      name: "我是谁，",
+      life: 3,
+      isAlive: true,
+      score: 0,
       sugar: 0,
+      sugarMax: sugarMaxN,
       dough: 0,
+      doughMax: doughMaxN,
       nowStudent: new Student(0, true),
       hasSubject: [],
       subjects: [
@@ -90,6 +156,12 @@ export default {
     };
   },
   computed: {
+    progressNum() {
+      return sub =>
+        `linear-gradient(to right,${this.progressColor} ${parseInt(
+          (sub.eatAdd / sub.grade) * 100
+        )}%, #b2bec3 0px)`;
+    },
     subValue() {
       return subjectKey => Student.subLists.get(subjectKey);
     },
@@ -106,6 +178,17 @@ export default {
       return out;
     }
   },
+  watch: {
+    "nowStudent.finnishedSubjects": {
+      // eslint-disable-next-line no-unused-vars
+      handler(newVal, oldVal) {
+        if (newVal === this.nowStudent.subjectsNum) {
+          this.plusScore(scoreStep);
+          this.makeStudent(this.score);
+        }
+      }
+    }
+  },
   methods: {
     plusItem(item, limit) {
       if (this[item] < limit) {
@@ -116,7 +199,7 @@ export default {
       return true;
     },
     plusSubject(subkey) {
-      if (this.hasSubject.length < 3) {
+      if (this.hasSubject.length < subjectMax) {
         const random = Math.random();
         if (random <= badPage) {
           this.hasSubject.push(false);
@@ -128,77 +211,135 @@ export default {
       }
       return true;
     },
+    plusScore(step) {
+      const justTime = new Date().getTime();
+      this.endPeopleTime = justTime;
+      if (
+        justTime - this.firstPeopleTime <=
+        MIN * this.nowStudent.subjectsNum * 1000
+      ) {
+        this.score += scoreExtend;
+      }
+      this.score += step * this.nowStudent.subjectsNum;
+    },
     deleteSubject() {
+      this.trashNumber += this.hasSubject.length;
       this.hasSubject.splice(0, this.hasSubject.length);
     },
     async timeInterval(todo, time = 1, interval = 1000) {
       for (let j = 0; j < time; j++) {
-        console.log(4);
         await this.timeout(todo, j, interval);
+        if (this.cleanTimeout) {
+          this.cleanTimeout = false;
+          break;
+        }
       }
     },
     timeout(doSome, argue, time = 1000) {
       return new Promise((resolve, reject) => {
         // eslint-disable-next-line no-constant-condition
         if (true) {
-          setTimeout(function() {
+          let interId = null;
+          interId = setInterval(function() {
             doSome(argue);
             resolve(argue);
+            clearInterval(interId);
           }, time);
         } else {
-          reject;
+          reject();
         }
       });
     },
-    //FIXME 性能问题
     makeStudent(score = 0, init = false) {
       let made = {};
       if (init) {
         made = this.nowStudent;
       } else {
+        this.cleanTimeout = true;
         made = new Student(score);
+        this.firstPeopleTime = this.endPeopleTime;
         this.nowStudent = made;
-        this.deadTime = made.deadTime;
       }
+      this.deadTime = made.deadTime;
+      this.finnishedSub = 0;
       this.timeInterval(t => {
         this.notice = `还剩${(made.deadTime - t).toString()}秒`;
-      }, this.deadTime);
+        if (made.deadTime - t <= 0) {
+          console.log(t);
+          if (this.life > 1) {
+            this.life--;
+            this.plusScore(0);
+            this.makeStudent(this.score);
+          } else {
+            this.life--;
+            this.cleanTimeout = true;
+            this.endTime = new Date().getTime();
+            this.isAlive = false;
+          }
+        }
+      }, this.deadTime + 1);
     },
     diffSubject() {
       let flag = false;
       if (this.hasSubject.indexOf(false) !== -1) {
         return -1;
       } else {
-        // eslint-disable-next-line for-direction
-        for (let i = this.hasSubject.length - 1; i >= 0; i++) {
-          for (let j = 0; j < this.nowStudent.deadSubjects.length; j++) {
-            if (this.hasSubject[i] === this.nowStudent.deadSubjects[j]) {
-              flag = i;
+        const pHasSubject = this.hasSubject;
+        let pDeadSubjects = this.nowStudent.deadSubjects;
+        for (let i = pHasSubject.length - 1; i >= 0; i--) {
+          for (let j = 0; j < pDeadSubjects.length; j++) {
+            if (pHasSubject[i] === pDeadSubjects[j].subject) {
+              flag = [i, j];
               break;
             }
           }
-          if (flag !== false) {
+          if (flag === "boolean") {
             break;
           }
         }
         return flag;
       }
     },
+    isEnough() {
+      if (this.sugar >= this.nowStudent.sugarNeed && this.dough >= 1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     makeCake() {
       //TODO 点击学生事件
-      console.log(this.diffSubject());
+      if (
+        this.diffSubject() !== false &&
+        this.diffSubject() !== -1 &&
+        this.isEnough()
+      ) {
+        const flg = this.diffSubject();
+        if (!this.nowStudent.deadSubjects[flg[1]].finnished) {
+          this.sugar -= this.nowStudent.sugarNeed;
+          this.dough--;
+          this.nowStudent.deadSubjects[flg[1]].eatAdd += 10;
+          this.hasSubject.splice(flg[0], 1);
+        }
+      }
     }
   },
   created() {},
   mounted() {
     this.firstTime = new Date().getTime();
-    this.makeStudent(true);
+    this.firstPeopleTime = this.firstTime;
+    this.makeStudent(0, true);
   }
 };
 </script>
 
 <style lang="scss" scoped>
-@import url("../style/var.scss");
+$birthRed: #ef4971;
+$sadBlue: #40eaff;
+$bombYellow: #ecc02c;
+$onechoBlue: #0d4f89;
+$borderColor: #ffe9d1;
+$studWidth: 90%;
 
 @mixin flex-normal($direct) {
   display: flex;
@@ -228,68 +369,144 @@ export default {
   flex-direction: column;
   width: 100vw;
   height: 100vh;
+  background: {
+    image: url("../../public/bg.png");
+    repeat: no-repeat;
+    size: 100%;
+  }
   .top {
-    height: 10vh;
-    background: burlywood;
+    height: 20.4vw;
+    background: {
+      image: url("../../public/head.png");
+      repeat: no-repeat;
+      size: 100%;
+    }
     flex: {
       grow: 0;
       shrink: 0;
     }
-    .my-score {
-      font: {
-        size: 1.5em;
-        family: arual;
+    .user-box {
+      @include flex-normal(row);
+      // max-width: 20vw;
+      padding: {
+        left: 5px;
+        right: 7px;
       }
+      height: 9.7vw;
+      border-radius: 5.3vw;
+      background: $sadBlue;
+      text-align: center;
+      .icon-box {
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+      .user-name {
+        color: $birthRed;
+        white-space: nowrap;
+        word-break: keep-all;
+        padding-left: 7px;
+        font: {
+          size: 4vw;
+        }
+      }
+    }
+    .my-score {
+      color: $sadBlue;
+      margin: 0 auto;
+      width: fit-content;
+      font: {
+        size: 8.5vw;
+      }
+    }
+    .life-box {
+      @include flex-normal(row);
+      flex-grow: 0;
+      flex-shrink: 0;
+      height: 9.7vw;
+      border-radius: 5.3vw;
+      background: $sadBlue;
+      text-align: center;
     }
   }
   .middle {
     @include flex-normal(row);
-    background: rgb(140, 189, 140);
     flex: {
       grow: 1;
       shrink: 0;
-    }
-    margin: {
-      top: 4vh;
-      bottom: 4vh;
     }
     .main-food {
       width: 40vw;
       min-height: 50vh;
       @include flex-normal(column);
+      .food-item {
+        @include flex-normal(column);
+        .food-text {
+          margin-top: 6px;
+          color: $bombYellow;
+        }
+      }
     }
-    .student {
-      background-color: #fff;
-      margin: 0 auto;
-      width: 50vw;
-      min-height: 50vh;
-      @include flex-normal(column);
-      @include border-normal(0);
-      .notice {
-        width: 100%;
-        height: 10%;
-        @include border-normal(top);
-        text-align: center;
-      }
-      .people {
-        width: 100%;
-      }
-      .stuList {
-        width: 100%;
-        .grade-group {
-          width: 100%;
+    .student-out {
+      background-color: $onechoBlue;
+      .student {
+        background-color: $onechoBlue;
+        margin: 0 auto;
+        width: 50vw;
+        min-height: 50vh;
+        margin: {
+          left: 10px;
+          right: 10px;
+          top: 5px;
+          bottom: 5px;
+        }
+        @include flex-normal(column);
+        border: {
+          style: solid;
+          color: $borderColor;
+          size: 4px;
+        }
+        .notice {
+          width: 90%;
+          height: 10%;
+          background-color: $bombYellow;
+          text-align: center;
+        }
+        .people-box {
+          width: 90%;
+          background-color: #2c2c2c;
+          @include flex-normal(column);
+          .people {
+            margin: 0 auto;
+            width: 75%;
+            height: 100%;
+          }
+        }
+
+        .sugar-need-box {
           @include flex-normal(row);
-          user-select: none;
-          padding: 2px;
-          @include border-normal(top);
+          background-color: $birthRed;
+          width: $studWidth;
+        }
+        .stuList {
+          width: 100%;
+          .grade-group {
+            width: $studWidth;
+            margin: 0 auto;
+            margin: {
+              top: 5px;
+              bottom: 5px;
+            }
+            @include flex-normal(row);
+            user-select: none;
+            overflow: hidden;
+          }
         }
       }
     }
   }
   .bottom {
-    height: 25vh;
+    height: 55vw;
     width: 100vw;
-    background: darkgrey;
     display: flex;
     justify-content: space-around;
     flex: {
@@ -299,6 +516,10 @@ export default {
     }
     .subject-group {
       @include flex-normal(row);
+      .subject-button {
+        width: 24vw;
+        height: 20vw;
+      }
     }
   }
 }

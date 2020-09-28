@@ -63,6 +63,7 @@
 
 <script>
 import Axios from "axios";
+import rsa from "../untils/rsa";
 
 export default {
   name: "List",
@@ -72,7 +73,7 @@ export default {
       rank: "",
       intergral: "",
       name: localStorage.nick,
-      begin: 0,
+      begin: "0",
       loading: false,
       finished: false
     };
@@ -80,11 +81,12 @@ export default {
   methods: {
     onLoad() {
       //获取数据
+      console.log(this.encryptData(this.begin), this.begin);
       Axios({
         method: "post",
-        url: "/mooncake-game/php/ranklist.php",
+        url: "/mooncake/php/ranklist.php",
         data: {
-          begin: this.begin
+          begin: rsa(this.begin)
         }
       })
         .then(response => {
@@ -95,7 +97,7 @@ export default {
             return;
           } else if (data.status === 200) {
             this.list = this.list.concat(data.res);
-            this.begin = this.list.length;
+            this.begin = this.list.length.toString();
           }
         })
         .catch(function(error) {
@@ -111,12 +113,11 @@ export default {
     }
   },
   created() {
-    let nick = this.name;
     Axios({
       method: "post",
-      url: "/mooncake-game/php/infor.php",
+      url: "/mooncake/php/infor.php",
       data: {
-        nick
+        nick: this.encryptData(this.name)
       }
     }).then(response => {
       let data = response.data;
@@ -185,7 +186,6 @@ export default {
   filter: brightness(1.1);
 }
 
-/*! autoprefixer: off */
 #my-score {
   background-color: transparent;
   width: 80vw;
@@ -201,7 +201,6 @@ export default {
   z-index: 0;
   border-radius: 0 0 20px 20px;
 }
-/* autoprefixer: on */
 
 #my-van-row {
   color: #000000;

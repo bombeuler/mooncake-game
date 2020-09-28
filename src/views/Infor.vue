@@ -38,6 +38,8 @@
 
 <script>
 import Axios from "axios";
+import rsa from "../untils/rsa";
+
 export default {
   name: "Infor",
   data() {
@@ -59,12 +61,11 @@ export default {
   },
   created() {
     console.log(localStorage.nick, this.name);
-    let nick = this.name;
     Axios({
       method: "post",
-      url: "/mooncake-game/php/infor.php",
+      url: "/mooncake/php/infor.php",
       data: {
-        nick
+        nick: rsa(this.name)
       }
     }).then(response => {
       let data = response.data;

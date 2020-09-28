@@ -15,7 +15,11 @@ import { Dialog } from "vant";
 import { List } from "vant";
 import { Cell, CellGroup } from "vant";
 import { Col, Row } from "vant";
+import { Image as VanImage } from "vant";
+import { Rate } from "vant";
 
+Vue.use(Rate);
+Vue.use(VanImage);
 Vue.use(Col);
 Vue.use(Row);
 Vue.use(Cell);
