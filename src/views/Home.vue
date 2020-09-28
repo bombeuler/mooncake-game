@@ -138,19 +138,19 @@
             <div class="icon-10">
               <van-icon size="5.7vw" name="newspaper-o" />
             </div>
-            <span>游戏简介</span>
+            <span class="others-span">游戏简介</span>
           </div>
           <div id="list" class="others-content" v-on:click="showList">
             <div class="icon-11">
               <van-icon size="7vw" name="bar-chart-o" />
             </div>
-            <span>排行榜</span>
+            <span class="others-span">排行榜</span>
           </div>
           <div id="home" class="others-content" v-on:click="showInfor">
             <div class="icon-10">
               <van-icon size="5.7vw" name="home-o" />
             </div>
-            <span>个人中心</span>
+            <span class="others-span">个人中心</span>
           </div>
         </div>
       </div>
@@ -268,10 +268,11 @@ export default {
       this.signStatus = sessionStorage.signStatus;
       return;
     }
-    if (localStorage.nick !== undefined) {
-      let nick = localStorage.nick;
-      let password = localStorage.password;
-      let values = {
+    if (!localStorage.getItem("user")) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const nick = user.nick;
+      const password = user.password;
+      const values = {
         nick,
         password
       };
@@ -369,7 +370,7 @@ a {
   font-size: 10px;
   text-align: center;
 }
-.others-content > span {
+.others-span {
   display: inline-block;
   margin-top: 5px;
   color: #ffffff;

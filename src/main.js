@@ -17,7 +17,11 @@ import { Cell, CellGroup } from "vant";
 import { Col, Row } from "vant";
 import { Image as VanImage } from "vant";
 import { Rate } from "vant";
+import { Toast } from "vant";
+import { Overlay } from "vant";
 
+Vue.use(Overlay);
+Vue.use(Toast);
 Vue.use(Rate);
 Vue.use(VanImage);
 Vue.use(Col);

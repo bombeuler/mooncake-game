@@ -3,7 +3,7 @@ import Qs from "qs";
 
 const request = config => {
   const instance = axios.create({
-    baseURL: "/api/",
+    baseURL: "/php/",
     timeout: 10000,
     transformRequest: [
       function(data) {

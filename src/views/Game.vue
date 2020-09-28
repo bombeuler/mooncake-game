@@ -1,6 +1,15 @@
 /* eslint-disable for-direction */
 <template>
   <div>
+    <van-overlay :show="isEnd" class="over-box">
+      <div class="end-box">
+        <div class="end-head">
+          <div class="score-box">{{ score }}</div>
+        </div>
+        <div class="end-middle"></div>
+        <div class="end-foot"></div>
+      </div>
+    </van-overlay>
     <main class="game">
       <van-row type="flex" class="top" justify="space-around" align="center">
         <van-col class="user-box">
@@ -113,6 +122,7 @@
 
 <script>
 import Student from "../untils/Student";
+import { request } from "../network/index";
 import {
   MIN,
   badPage,
@@ -127,6 +137,7 @@ export default {
   name: "Game",
   data() {
     return {
+      isEnd: true,
       notice: "",
       progressColor: "#ecc02c",
       trashNumber: 0,
@@ -135,7 +146,7 @@ export default {
       endTime: null,
       endPeopleTime: null,
       cleanTimeout: false,
-      name: "我是谁，",
+      name: "",
       life: 3,
       isAlive: true,
       score: 0,
@@ -154,6 +165,20 @@ export default {
         { name: "概率论", key: "m5" }
       ]
     };
+  },
+  created() {
+    if (localStorage.getItem("user")) {
+      console.log(1);
+      this.name = JSON.parse(localStorage.getItem("user")).nick;
+    } else {
+      this.$router.push("/home");
+      console.log(2);
+    }
+  },
+  mounted() {
+    this.firstTime = new Date().getTime();
+    this.firstPeopleTime = this.firstTime;
+    this.makeStudent(0, true);
   },
   computed: {
     progressNum() {
@@ -186,6 +211,55 @@ export default {
           this.plusScore(scoreStep);
           this.makeStudent(this.score);
         }
+      }
+    },
+    // eslint-disable-next-line no-unused-vars
+    //TODO
+    // trashNumber(newVal, oldVal){
+    //   if(this.firstTime>=new Date("2020/10/5").getTime()&&newVal>=300){
+    //     const nick = this.nick;
+    //     request({ method: "get",
+    //       url: "/record",
+    //       data:{record: true}}).then(res=>{
+    //       })
+    //   }
+    // },
+    // eslint-disable-next-line no-unused-vars
+    isAlive(newVal, oldVal) {
+      if (!newVal) {
+        console.log(8);
+        const nick = this.nick;
+        const time = this.endTime - this.firstTime;
+        //TODO
+        const score = this.score;
+        this.$toast.loading({
+          message: "上传分数中...",
+          forbidClick: true
+        });
+        request({
+          method: "post",
+          url: "/game.php",
+          data: {
+            nick,
+            time,
+            score
+          }
+        })
+          .then(res => {
+            if (res.data === 1) {
+              console.log("etuu");
+              this.$toast.success("分数已上传");
+            } else {
+              this.$toast.oast.fail("分数上传失败，请检查网络状态");
+            }
+          })
+          // eslint-disable-next-line no-unused-vars
+          .catch(err => {
+            this.$toast.fail("分数上传失败，请检查网络状态");
+          })
+          .finally(() => {
+            this.isEnd = true;
+          });
       }
     }
   },
@@ -323,12 +397,6 @@ export default {
         }
       }
     }
-  },
-  created() {},
-  mounted() {
-    this.firstTime = new Date().getTime();
-    this.firstPeopleTime = this.firstTime;
-    this.makeStudent(0, true);
   }
 };
 </script>
@@ -364,10 +432,47 @@ $studWidth: 90%;
   }
 }
 
+.over-box {
+  @include flex-normal(row);
+  .end-box {
+    margin: 0 auto;
+    width: 90vw;
+    height: 150vw;
+    background-color: #fff;
+    @include flex-normal(column);
+    .end-head {
+      width: 100%;
+      height: 10%;
+      .score-box {
+        @include flex-normal(row);
+        height: 100%;
+        width: auto;
+        color: $sadBlue;
+        font: {
+          size: 2.5em;
+        }
+      }
+    }
+    .end-middle {
+      width: 100%;
+      flex-shrink: 1;
+      flex-grow: 1;
+      background-color: brown;
+    }
+    .end-foot {
+      width: 100%;
+      height: 20%;
+      background-color: yellow;
+    }
+  }
+}
+
 .game {
   display: flex;
   flex-direction: column;
   width: 100vw;
+  caret-color: rgba(0, 0, 0, 0);
+  user-select: none;
   height: 100vh;
   background: {
     image: url("../../public/bg.png");
