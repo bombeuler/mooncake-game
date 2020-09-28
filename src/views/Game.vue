@@ -6,8 +6,17 @@
         <div class="end-head">
           <div class="score-box">{{ score }}</div>
         </div>
-        <div class="end-middle"></div>
-        <div class="end-foot"></div>
+        <div class="end-middle"><who-win /></div>
+        <div class="end-foot">
+          <cyc-button content="回到首页" icon-item="wap-home-o" where="/home" />
+          <cyc-button
+            content="再来一次"
+            icon-item="replay"
+            where="0"
+            :isReplaced="true"
+          />
+          <cyc-button content="排行榜" icon-item="bar-chart-o" where="/list" />
+        </div>
       </div>
     </van-overlay>
     <main class="game">
@@ -132,6 +141,9 @@ import {
   sugarMaxN,
   doughMaxN
 } from "../untils/game.config";
+
+import whoWin from "../components/who-win";
+import cycButton from "../components/cyc-button";
 
 export default {
   name: "Game",
@@ -397,6 +409,10 @@ export default {
         }
       }
     }
+  },
+  components: {
+    whoWin,
+    cycButton
   }
 };
 </script>
@@ -438,7 +454,7 @@ $studWidth: 90%;
     margin: 0 auto;
     width: 90vw;
     height: 150vw;
-    background-color: #fff;
+    background-color: black;
     @include flex-normal(column);
     .end-head {
       width: 100%;
@@ -454,12 +470,13 @@ $studWidth: 90%;
       }
     }
     .end-middle {
+      @include flex-normal(row);
       width: 100%;
       flex-shrink: 1;
       flex-grow: 1;
-      background-color: brown;
     }
     .end-foot {
+      @include flex-normal(row);
       width: 100%;
       height: 20%;
       background-color: yellow;

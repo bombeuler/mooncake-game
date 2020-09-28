@@ -1,12 +1,10 @@
 <template>
-  <div id="bg">
-    <div id="title">排行榜</div>
+  <div>
     <div id="list">
       <van-list
         v-model="loading"
         :finished="finished"
         finished-text="---010---"
-        @load="onLoad"
       >
         <div class="list" v-for="(item, index) in list" :key="index">
           <van-row>
@@ -55,9 +53,6 @@
         </van-col>
       </van-row>
     </div>
-    <div id="arrow-back" v-on:click="backToHome">
-      <van-icon name="arrow-left" size="20" />
-    </div>
   </div>
 </template>
 
@@ -66,58 +61,15 @@ import Axios from "axios";
 import rsa from "../untils/rsa";
 
 export default {
-  name: "List",
-  data() {
-    return {
-      list: [],
-      rank: "",
-      intergral: "",
-      name: localStorage.nick,
-      begin: "0",
-      loading: false,
-      finished: false
-    };
-  },
-  methods: {
-    onLoad() {
-      //获取数据
-      console.log(this.encryptData(this.begin), this.begin);
-      Axios({
-        method: "post",
-        url: "/mooncake/php/ranklist.php",
-        data: {
-          begin: rsa(this.begin)
-        }
-      })
-        .then(response => {
-          let data = response.data;
-          console.log(data);
-          if (data.status === 404) {
-            this.finished = true;
-            return;
-          } else if (data.status === 200) {
-            this.list = this.list.concat(data.res);
-            this.begin = this.list.length.toString();
-          }
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-      //渲染列表
-      setTimeout(() => {
-        this.loading = false;
-      }, 1000);
-    },
-    backToHome() {
-      this.$router.push("/home");
-    }
-  },
+  name: "whoWin",
   created() {
+    const num = this.length;
     Axios({
       method: "post",
       url: "/mooncake/php/infor.php",
       data: {
-        nick: rsa(this.name)
+        nick: rsa(this.name),
+        num
       }
     }).then(response => {
       let data = response.data;
@@ -127,23 +79,52 @@ export default {
         this.intergral = data.intergral;
       }
     });
+    Axios({
+      method: "post",
+      url: "/mooncake/php/ranklist.php",
+      data: {
+        begin: rsa("0")
+      }
+    })
+      .then(response => {
+        let data = response.data;
+        console.log(data);
+        if (data.status === 404) {
+          this.finished = true;
+          return;
+        } else if (data.status === 200) {
+          this.list = data.res;
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  },
+  props: {
+    length: {
+      default: 5,
+      type: Number
+    }
+  },
+  data() {
+    return {
+      list: [],
+      rank: "",
+      intergral: "",
+      name: JSON.parse(localStorage.getItem("user")).nick,
+      loading: false,
+      finished: false
+    };
   }
 };
 </script>
 
 <style lang="scss" scoped>
-#bg {
-  position: absolute;
-  height: 100vh;
-  width: 100vw;
-  background: #ffffff url("../../public/bg.png") no-repeat fixed right;
-  background-size: cover;
-}
 #list {
   background-color: rgb(255, 255, 255, 0.5);
   width: 80vw;
   margin: 0 auto;
-  height: 60vh;
+  height: auto;
   overflow: scroll;
 }
 
@@ -199,7 +180,6 @@ export default {
   width: 80vw;
   height: 5vh;
   z-index: 0;
-  border-radius: 0 0 20px 20px;
 }
 
 #my-van-row {
@@ -226,7 +206,6 @@ export default {
   height: 11vw;
   text-align: center;
   line-height: 13.3vw;
-  border-radius: 50%;
   margin-left: 15vw;
   margin-top: 5vw;
 }
