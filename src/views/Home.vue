@@ -83,7 +83,7 @@
                     {
                       required: true,
                       pattern: phonePattern,
-                      message: '请填写电话'
+                      message: '电话格式不正确'
                     }
                   ]"
                 />
@@ -162,6 +162,7 @@ import { Dialog } from "vant";
 import Axios from "axios";
 import md5 from "blueimp-md5";
 import { Notify } from "vant";
+import rsa from "../untils/rsa";
 
 export default {
   name: "Home",
@@ -184,13 +185,13 @@ export default {
       values.password = md5(values.password);
       Axios({
         method: "post",
-        url: "http://localhost/mooncake-game/php/signin",
+        url: "/mooncake/php/signin.php",
         data: {
-          values
+          values: rsa(JSON.stringify(values))
         }
       }).then(response => {
         let data = response.data;
-        // console.log(response, data);
+        console.log(response, data);
         if (data.status !== 200) {
           Notify(data.msg);
           if (data.msg === "该用户不存在") {
@@ -214,16 +215,18 @@ export default {
 
     onSignUp(values) {
       values.password = md5(values.password);
+      values = JSON.stringify(values);
+      values = rsa(values);
       Axios({
         method: "post",
-        url: "http://localhost/mooncake-game/php/signup",
+        url: "/mooncake/php/signup.php",
         data: {
           values
         }
       })
         .then(response => {
           let data = response.data;
-          // console.log(data);
+          console.log(data);
           if (data.status !== 200) {
             Notify(data.msg);
             return;
@@ -278,7 +281,7 @@ export default {
       };
       Axios({
         method: "post",
-        url: "http://localhost/mooncake-game/php/signin",
+        url: "/mooncake/php/signin.php",
         data: {
           values
         }
