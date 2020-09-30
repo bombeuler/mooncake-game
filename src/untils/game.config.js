@@ -1,7 +1,7 @@
-const MAX = 22;
-const MIN = 20;
+const MAX = 20;
+const MIN = 5;
 const RADNUM = 3;
-const Just0to1 = x => 1 - 1 / (1 + Math.exp(-(x / 10 - 10)));
+const Just0to1 = x => 1 - 1 / (1 + Math.exp(-(x / 5 - 10)));
 const subLists = new Map([
   ["m0", "数学分析"],
   ["m1", "高等代数"],

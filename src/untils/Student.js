@@ -7,7 +7,7 @@ class Student {
     const step = MAX - MIN;
     const num = Math.ceil(Math.random() * 3);
     const time = parseInt(MIN + step * Just0to1(score)) * num;
-    const timePlus = isFirst ? 0 : 0;
+    const timePlus = isFirst ? 8 : 0;
     const randomTime =
       Math.floor(Math.random() * RADNUM) - Math.floor(Math.random() * RADNUM);
     let arr = ["m0", "m1", "m2", "m3", "m4", "m5"];
