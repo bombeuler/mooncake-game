@@ -1,7 +1,7 @@
 const MAX = 1;
 const MIN = 0;
 const RADNUM = 3;
-const Just0to1 = x => Math.exp(-x);
+const Just0to1 = x => 1 - 1 / (1 + Math.exp(-(x / 10 - 10)));
 const subLists = new Map([
   ["m0", "数学分析"],
   ["m1", "高等代数"],
@@ -14,7 +14,7 @@ const subLists = new Map([
 const badPage = 0.02;
 const subjectMax = 5;
 const scoreStep = 10;
-const scoreExtend = 6;
+const scoreExtend = 16;
 const sugarMaxN = 30;
 const doughMaxN = 30;
 

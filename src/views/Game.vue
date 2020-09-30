@@ -4,10 +4,28 @@
     <van-overlay :show="isEnd" class="over-box">
       <div class="end-box">
         <div class="end-head">
+          <div class="score-head">得分</div>
           <div class="score-box">{{ score }}</div>
         </div>
-        <div class="end-middle"></div>
-        <div class="end-foot"></div>
+        <div class="end-middle"><who-win /></div>
+        <span style="font-size:13px;color:white;"
+          >扫描下方二维码填写调查问卷</span
+        >
+        <van-image
+          width="30vw"
+          :src="require('./../assets/erweima.jpg')"
+          class="icon-box"
+        />
+        <div class="end-foot">
+          <cyc-button content="回到首页" icon-item="wap-home-o" where="/home" />
+          <cyc-button
+            content="再来一次"
+            icon-item="replay"
+            where="0"
+            :isReplaced="true"
+          />
+          <cyc-button content="喂食榜" icon-item="bar-chart-o" where="/list" />
+        </div>
       </div>
     </van-overlay>
     <main class="game">
@@ -129,10 +147,13 @@ import {
   scoreStep,
   scoreExtend,
   sugarMaxN,
-  doughMaxN
+  doughMaxN,
 } from "../untils/game.config";
 import rsa from "../untils/rsa";
 import Axios from "axios";
+
+import whoWin from "../components/who-win";
+import cycButton from "../components/cyc-button";
 
 export default {
   name: "Game",
@@ -148,7 +169,7 @@ export default {
       endPeopleTime: null,
       cleanTimeout: false,
       name: "",
-      life: 1,
+      life: 3,
       isAlive: true,
       score: 0,
       sugar: 0,
@@ -163,17 +184,15 @@ export default {
         { name: "实变函数", key: "m2" },
         { name: "复变函数", key: "m3" },
         { name: "近世代数", key: "m4" },
-        { name: "概率论", key: "m5" }
-      ]
+        { name: "概率论", key: "m5" },
+      ],
     };
   },
   created() {
     if (localStorage.getItem("user")) {
-      console.log(1);
       this.name = JSON.parse(localStorage.getItem("user")).nick;
     } else {
       this.$router.push("/home");
-      console.log(2);
     }
   },
   mounted() {
@@ -183,13 +202,13 @@ export default {
   },
   computed: {
     progressNum() {
-      return sub =>
+      return (sub) =>
         `linear-gradient(to right,${this.progressColor} ${parseInt(
           (sub.eatAdd / sub.grade) * 100
         )}%, #b2bec3 0px)`;
     },
     subValue() {
-      return subjectKey => Student.subLists.get(subjectKey);
+      return (subjectKey) => Student.subLists.get(subjectKey);
     },
     subjectOut1() {
       let arr = this.subjects;
@@ -202,7 +221,7 @@ export default {
       let out = [];
       out = arr.slice(3);
       return out;
-    }
+    },
   },
   watch: {
     "nowStudent.finnishedSubjects": {
@@ -212,57 +231,55 @@ export default {
           this.plusScore(scoreStep);
           this.makeStudent(this.score);
         }
-      }
+      },
     },
     // eslint-disable-next-line no-unused-vars
-    //TODO
-    // trashNumber(newVal, oldVal){
-    //   if(this.firstTime>=new Date("2020/10/5").getTime()&&newVal>=300){
+    // TODO
+    // trashNumber(newVal, oldVal) {
+    //   if (this.firstTime >= new Date("2020/10/5").getTime() && newVal >= 300) {
     //     const nick = this.nick;
-    //     request({ method: "get",
+    //     request({
+    //       method: "get",
     //       url: "/record",
-    //       data:{record: true}}).then(res=>{
-    //       })
+    //       data: { record: true },
+    //     }).then((res) => {});
     //   }
     // },
     // eslint-disable-next-line no-unused-vars
     isAlive(newVal, oldVal) {
       if (!newVal) {
-        console.log(8);
         const nick = this.name;
         const time = this.endTime - this.firstTime;
-        //TODO
         const score = this.score;
         let values = rsa(JSON.stringify({ nick, time, score }));
         this.$toast.loading({
           message: "上传分数中...",
-          forbidClick: true
+          forbidClick: true,
         });
         Axios({
           method: "post",
           url: "/mooncake/php/game.php",
           data: {
-            values
-          }
+            values,
+          },
         })
-          .then(res => {
+          .then((res) => {
             console.log(res.data);
             if (res.data === 1) {
-              console.log("etuu");
               this.$toast.success("分数已上传");
             } else {
               this.$toast.oast.fail("分数上传失败，请检查网络状态");
             }
           })
           // eslint-disable-next-line no-unused-vars
-          .catch(err => {
+          .catch((err) => {
             this.$toast.fail("分数上传失败，请检查网络状态");
           })
           .finally(() => {
             this.isEnd = true;
           });
       }
-    }
+    },
   },
   methods: {
     plusItem(item, limit) {
@@ -337,10 +354,9 @@ export default {
       }
       this.deadTime = made.deadTime;
       this.finnishedSub = 0;
-      this.timeInterval(t => {
+      this.timeInterval((t) => {
         this.notice = `还剩${(made.deadTime - t).toString()}秒`;
         if (made.deadTime - t <= 0) {
-          console.log(t);
           if (this.life > 1) {
             this.life--;
             this.plusScore(0);
@@ -397,8 +413,25 @@ export default {
           this.hasSubject.splice(flg[0], 1);
         }
       }
-    }
-  }
+    },
+    mounted() {
+      // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+      let vh = window.innerHeight * 0.01;
+      // Then we set the value in the --vh custom property to the root of the document
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+
+      // We listen to the resize event
+      window.addEventListener("resize", () => {
+        // We execute the same script as before
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      });
+    },
+  },
+  components: {
+    whoWin,
+    cycButton,
+  },
 };
 </script>
 
@@ -409,6 +442,11 @@ $bombYellow: #ecc02c;
 $onechoBlue: #0d4f89;
 $borderColor: #ffe9d1;
 $studWidth: 90%;
+
+.bg {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+}
 
 @mixin flex-normal($direct) {
   display: flex;
@@ -439,31 +477,36 @@ $studWidth: 90%;
     margin: 0 auto;
     width: 90vw;
     height: 150vw;
-    background-color: #fff;
+    background-color: rgba(189, 186, 186, 0.8);
     @include flex-normal(column);
+    border-radius: 1em;
     .end-head {
+      @include flex-normal(column);
       width: 100%;
-      height: 10%;
+      height: 15%;
+      .score-head {
+        margin-top: 3px;
+      }
       .score-box {
         @include flex-normal(row);
         height: 100%;
         width: auto;
-        color: $sadBlue;
+        color: black;
         font: {
           size: 2.5em;
         }
       }
     }
     .end-middle {
-      width: 100%;
+      @include flex-normal(row);
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 1em;
       flex-shrink: 1;
-      flex-grow: 1;
-      background-color: brown;
     }
     .end-foot {
+      @include flex-normal(row);
       width: 100%;
-      height: 20%;
-      background-color: yellow;
+      height: 16%;
     }
   }
 }
