@@ -174,7 +174,7 @@ export default {
       active: 0,
       signStatus: 0,
       showError: false,
-      show: false,
+      show: false
     };
   },
   methods: {
@@ -184,9 +184,9 @@ export default {
         method: "post",
         url: "/mooncake/php/signin.php",
         data: {
-          values: rsa(JSON.stringify(values)),
-        },
-      }).then((response) => {
+          values: rsa(JSON.stringify(values))
+        }
+      }).then(response => {
         let data = response.data;
         console.log(response, data);
         if (data.status !== 200) {
@@ -197,14 +197,14 @@ export default {
         } else {
           Notify({
             type: "success",
-            message: "登录成功",
+            message: "登录成功"
           });
           sessionStorage.signStatus = 1;
           localStorage.setItem(
             "user",
             JSON.stringify({
               nick: values.nick,
-              password: values.password,
+              password: values.password
             })
           );
 
@@ -224,10 +224,10 @@ export default {
         method: "post",
         url: "/mooncake/php/signup.php",
         data: {
-          values,
-        },
+          values
+        }
       })
-        .then((response) => {
+        .then(response => {
           let data = response.data;
           console.log(data);
           if (data.status !== 200) {
@@ -254,15 +254,15 @@ export default {
     },
     gameStart() {
       this.$router.push("/game");
-    },
+    }
   },
   computed: {
     signAnimate: () => {
       return {
         signIn: this.active == 2,
-        signUp: this.active == 1,
+        signUp: this.active == 1
       };
-    },
+    }
   },
   created() {
     if (sessionStorage.signStatus == 1) {
@@ -275,15 +275,15 @@ export default {
       const password = user.password;
       const values = JSON.stringify({
         nick,
-        password,
+        password
       });
       Axios({
         method: "post",
         url: "/mooncake/php/signin.php",
         data: {
-          values: rsa(values),
-        },
-      }).then((response) => {
+          values: rsa(values)
+        }
+      }).then(response => {
         let data = response.data;
         // console.log(response, data);
         if (data.status !== 200) {
@@ -294,7 +294,7 @@ export default {
         } else {
           Notify({
             type: "success",
-            message: "登录成功",
+            message: "登录成功"
           });
           sessionStorage.signStatus = 1;
           this.signStatus = sessionStorage.signStatus;
@@ -316,7 +316,7 @@ export default {
       console.log(vh);
       document.documentElement.style.setProperty("--vh", `${vh}px`);
     });
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -328,7 +328,7 @@ a {
 }
 
 #container {
-  background: #00ff00 url("../../public/bg.png") no-repeat fixed right;
+  background: #00ff00 url("../../public/assets/bg.png") no-repeat fixed right;
   background-size: cover;
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);

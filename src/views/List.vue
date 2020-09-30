@@ -22,8 +22,8 @@
                             ? ''
                             : 'list-rd'
                           : 'list-nd'
-                        : 'list-st',
-                    ],
+                        : 'list-st'
+                    ]
                   ]"
                 >
                   <van-icon v-if="index + 1 == 1" name="fire-o" color="white" />
@@ -63,8 +63,8 @@
                         ? ''
                         : 'list-rd'
                       : 'list-nd'
-                    : 'list-st',
-                ],
+                    : 'list-st'
+                ]
               ]"
             >
               <van-icon v-if="rank == 1" name="fire-o" color="white" />
@@ -102,7 +102,7 @@ export default {
       name: JSON.parse(localStorage.getItem("user")).nick,
       begin: "0",
       loading: false,
-      finished: false,
+      finished: false
     };
   },
   methods: {
@@ -116,10 +116,10 @@ export default {
         method: "post",
         url: "/mooncake/php/ranklist.php",
         data: {
-          values: rsa(values),
-        },
+          values: rsa(values)
+        }
       })
-        .then((response) => {
+        .then(response => {
           let data = response.data;
           console.log(data);
           if (data.status === 404) {
@@ -140,16 +140,19 @@ export default {
     },
     backToHome() {
       this.$router.push("/home");
-    },
+    }
   },
   created() {
+    if (sessionStorage.signStatus != 1) {
+      this.$router.push("/home");
+    }
     Axios({
       method: "post",
       url: "/mooncake/php/infor.php",
       data: {
-        nick: rsa(this.name),
-      },
-    }).then((response) => {
+        nick: rsa(this.name)
+      }
+    }).then(response => {
       let data = response.data;
       console.log(data);
       if (data.status == 200) {
@@ -171,7 +174,7 @@ export default {
       console.log(vh);
       document.documentElement.style.setProperty("--vh", `${vh}px`);
     });
-  },
+  }
 };
 </script>
 
@@ -183,7 +186,7 @@ export default {
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
   width: 100vw;
-  background: url("../../public/bg.png") no-repeat fixed right;
+  background: url("../../public/assets/bg.png") no-repeat fixed right;
   background-size: cover;
 }
 .whole-list {

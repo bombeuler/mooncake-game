@@ -133,7 +133,16 @@ class db
         while ($row = $res->fetch_assoc()) {
             $rank += $row["rank"];
         }
-        echo json_encode(["rank" => $rank, "credit" => $credit, "status" => 200]);
+        $sql = "SELECT intergral FROM user WHERE nick = '$nick';";
+        $res = $this->_db->query($sql);
+        if (!$res) {
+            echo $this->_db->error;
+            return;
+        }
+        while ($row = $res->fetch_assoc()) {
+            $intergral = $row["intergral"];
+        }
+        echo json_encode(["rank" => $rank, "credit" => $credit, "intergral" => $intergral, "status" => 200]);
     }
 
     public function getRankList($begin, $length = 20)

@@ -4,8 +4,12 @@
       <div id="infor">
         <div id="avatar">
           <div id="avatar-img">
-            <img width="100%" src="../assets/avatar.png" class="icon-box" />
-          <div id="avatar-name">{{ name }}</div>
+            <img
+              width="100%"
+              src="../../public/assets/avatar.png"
+              class="icon-box"
+            />
+            <div id="avatar-name">{{ name }}</div>
           </div>
         </div>
         <div id="my-infor">
@@ -13,23 +17,24 @@
             <div>名次</div>
             {{ rank }}
           </div>
-          <hr />
+          <hr style="width:100%" />
           <div id="my-score-st" class="infor">
             <div>游戏总分数</div>
             {{ credit }}
           </div>
-          <hr />
+          <hr style="width:100%" />
           <div id="my-credit" class="infor">
             <div>当前所得积分</div>
-            {{ credit }}
+            {{ intergral }}
           </div>
         </div>
       </div>
       <div id="rule">
         积分计算规则
 
-        <li>第一,二,三名分别获得120,110,100积分</li>
-        <li>后续名次按积分=100-排名*1公式计算</li>
+        <div class="bb">第一,二,三名分别获得440,420,400积分</div>
+        <div class="bb">后续名次按积分=400-排名*4公式计算</div>
+        <div class="bb">积分每日0点更新，此积分与科协其他活动共用</div>
 
         <div class="tips">需实名注册并填写调查问卷才能领奖哦</div>
       </div>
@@ -73,8 +78,8 @@
             {
               required: true,
               pattern: uidPattern,
-              message: '请输入正确学号',
-            },
+              message: '请输入正确学号'
+            }
           ]"
         />
         <van-field
@@ -95,8 +100,8 @@
             {
               required: true,
               pattern: phonePattern,
-              message: '电话格式不正确',
-            },
+              message: '电话格式不正确'
+            }
           ]"
         />
         <div style="margin: 16px;">
@@ -124,8 +129,9 @@ export default {
       tel: "",
       realName: "",
       stuNum: "",
+      intergral: "",
       phonePattern: /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/,
-      uidPattern: /[Uu]20(16|17|18|19|20)\d{5,}/,
+      uidPattern: /[Uu]20(16|17|18|19|20)\d{5,}/
     };
   },
   methods: {
@@ -148,31 +154,35 @@ export default {
         method: "post",
         url: "/mooncake/php/auth.php",
         data: {
-          values: rsa(values),
-        },
-      }).then((response) => {
+          values: rsa(values)
+        }
+      }).then(response => {
         // console.log(response.data);
         let data = response.data;
         if (data.status == 200) {
           this.show = false;
         }
       });
-    },
+    }
   },
   created() {
+    if (sessionStorage.signStatus != 1) {
+      this.$router.push("/home");
+    }
     console.log(this.name);
     Axios({
       method: "post",
       url: "/mooncake/php/infor.php",
       data: {
-        nick: rsa(this.name),
-      },
-    }).then((response) => {
+        nick: rsa(this.name)
+      }
+    }).then(response => {
       let data = response.data;
       console.log(data);
       if (data.status == 200) {
         this.rank = data.rank;
         this.credit = data.credit;
+        this.intergral = data.intergral;
       }
     });
   },
@@ -188,7 +198,7 @@ export default {
       let vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
     });
-  },
+  }
 };
 </script>
 
@@ -198,7 +208,7 @@ export default {
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
   width: 100vw;
-  background: #ffffff url("../../public/bg.png") no-repeat fixed right;
+  background: #ffffff url("../../public/assets/bg.png") no-repeat fixed right;
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -217,14 +227,14 @@ export default {
 #infor {
   display: flex;
   border-bottom: 1px solid #000;
-  height: 42vw;
+  height: fit-content;
   border-radius: 2vw 2vw 0 0;
   background-color: rgba(255, 255, 255, 0.5);
 }
 #avatar {
   display: inline-block;
   width: 48vw;
-  height: 48vw;
+  /* height: 48vw; */
 }
 #avatar-img {
   width: 60%;
@@ -240,17 +250,23 @@ export default {
   text-align: center;
 }
 #my-infor {
-  display: inline-block;
+  display: flex;
+  /* flex-direction: column; */
+  flex-wrap: wrap;
+  justify-content: center;
   width: 32vw;
-  height: 48vw;
+  /* height: 48vw; */
 }
 .infor {
+  width: 100%;
   text-align: center;
-  margin-top: 1.4vh;
+  margin-top: 0.5vw;
+  margin-bottom: 0.5vw;
   border-left: 1px solid #000;
 }
 
 #rule {
+  font-weight: bold;
   background-color: rgba(255, 255, 255, 0.5);
   width: 100%;
   height: 40vw;
@@ -265,8 +281,13 @@ export default {
 }
 .tips {
   font-size: 10px;
-  color: grey;
+  font-weight: lighter;
+  color: white;
   text-align: center;
+}
+.bb {
+  font-weight: normal;
+  font-size: 14px;
 }
 
 .authen {
@@ -289,6 +310,6 @@ export default {
   line-height: 13.3vw;
   border-radius: 50%;
   margin-left: 15vw;
-  margin-top: 12vw;
+  margin-top: 6vw;
 }
 </style>

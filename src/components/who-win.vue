@@ -125,7 +125,7 @@ export default {
   },
   props: {
     length: {
-      default: 10,
+      default: 5,
       type: Number
     }
   },

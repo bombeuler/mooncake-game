@@ -13,7 +13,7 @@
         >
         <van-image
           width="30vw"
-          :src="require('./../assets/erweima.jpg')"
+          :src="require('../../public/assets/erweima.jpg')"
           class="icon-box"
         />
         <div class="end-foot">
@@ -33,7 +33,7 @@
         <van-col class="user-box">
           <van-image
             width="5.4vw"
-            :src="require('./../assets/user_icon.png')"
+            :src="require('./../../public/assets/user_icon.png')"
             class="icon-box"
           />
           <span class="user-name"> {{ name }}</span></van-col
@@ -56,30 +56,27 @@
       </van-row>
       <van-row class="middle">
         <div class="main-food">
-          <div class="food-item">
+          <div class="food-item" v-on:click="plusItem('sugar', sugarMax)">
             <van-image
-              @click="plusItem('sugar', sugarMax)"
               fit="contain"
               width="13.8vw"
-              :src="require('../assets/sugar.png')"
+              :src="require('../../public/assets/sugar.png')"
             />
             <span class="food-text">烧糖&nbsp;&nbsp;{{ sugar }}</span>
           </div>
-          <div class="food-item">
+          <div class="food-item" v-on:click="plusItem('dough', doughMax)">
             <van-image
-              @click="plusItem('dough', doughMax)"
               fit="contain"
               width="15.7vw"
-              :src="require('../assets/dough.png')"
+              :src="require('../../public/assets/dough.png')"
             />
             <span class="food-text">面团&nbsp;&nbsp;{{ dough }}</span>
           </div>
-          <div class="food-item">
+          <div class="food-item" v-on:click="deleteSubject">
             <van-image
-              @click="deleteSubject"
               fit="contain"
               width="12.3vw"
-              :src="require('../assets/trash.png')"
+              :src="require('../../public/assets/trash.png')"
             />
             <span class="food-text">垃圾桶&nbsp;&nbsp;{{ trashNumber }}</span>
           </div>
@@ -90,7 +87,7 @@
             <div class="people-box">
               <van-image
                 class="people"
-                :src="require('@/assets/student.png')"
+                :src="require('@/../public/assets/student.png')"
                 width="70%"
               />
             </div>
@@ -147,7 +144,7 @@ import {
   scoreStep,
   scoreExtend,
   sugarMaxN,
-  doughMaxN,
+  doughMaxN
 } from "../untils/game.config";
 import rsa from "../untils/rsa";
 import Axios from "axios";
@@ -184,11 +181,14 @@ export default {
         { name: "实变函数", key: "m2" },
         { name: "复变函数", key: "m3" },
         { name: "近世代数", key: "m4" },
-        { name: "概率论", key: "m5" },
-      ],
+        { name: "概率论", key: "m5" }
+      ]
     };
   },
   created() {
+    if (sessionStorage.signStatus != 1) {
+      this.$router.push("/home");
+    }
     if (localStorage.getItem("user")) {
       this.name = JSON.parse(localStorage.getItem("user")).nick;
     } else {
@@ -199,16 +199,27 @@ export default {
     this.firstTime = new Date().getTime();
     this.firstPeopleTime = this.firstTime;
     this.makeStudent(0, true);
+    // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    let vh = window.innerHeight * 0.01;
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+
+    // We listen to the resize event
+    window.addEventListener("resize", () => {
+      // We execute the same script as before
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    });
   },
   computed: {
     progressNum() {
-      return (sub) =>
+      return sub =>
         `linear-gradient(to right,${this.progressColor} ${parseInt(
           (sub.eatAdd / sub.grade) * 100
         )}%, #b2bec3 0px)`;
     },
     subValue() {
-      return (subjectKey) => Student.subLists.get(subjectKey);
+      return subjectKey => Student.subLists.get(subjectKey);
     },
     subjectOut1() {
       let arr = this.subjects;
@@ -221,7 +232,7 @@ export default {
       let out = [];
       out = arr.slice(3);
       return out;
-    },
+    }
   },
   watch: {
     "nowStudent.finnishedSubjects": {
@@ -231,7 +242,7 @@ export default {
           this.plusScore(scoreStep);
           this.makeStudent(this.score);
         }
-      },
+      }
     },
     // eslint-disable-next-line no-unused-vars
     // TODO
@@ -254,16 +265,16 @@ export default {
         let values = rsa(JSON.stringify({ nick, time, score }));
         this.$toast.loading({
           message: "上传分数中...",
-          forbidClick: true,
+          forbidClick: true
         });
         Axios({
           method: "post",
           url: "/mooncake/php/game.php",
           data: {
-            values,
-          },
+            values
+          }
         })
-          .then((res) => {
+          .then(res => {
             console.log(res.data);
             if (res.data === 1) {
               this.$toast.success("分数已上传");
@@ -272,14 +283,14 @@ export default {
             }
           })
           // eslint-disable-next-line no-unused-vars
-          .catch((err) => {
+          .catch(err => {
             this.$toast.fail("分数上传失败，请检查网络状态");
           })
           .finally(() => {
             this.isEnd = true;
           });
       }
-    },
+    }
   },
   methods: {
     plusItem(item, limit) {
@@ -354,7 +365,7 @@ export default {
       }
       this.deadTime = made.deadTime;
       this.finnishedSub = 0;
-      this.timeInterval((t) => {
+      this.timeInterval(t => {
         this.notice = `还剩${(made.deadTime - t).toString()}秒`;
         if (made.deadTime - t <= 0) {
           if (this.life > 1) {
@@ -413,25 +424,12 @@ export default {
           this.hasSubject.splice(flg[0], 1);
         }
       }
-    },
-    mounted() {
-      // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
-      let vh = window.innerHeight * 0.01;
-      // Then we set the value in the --vh custom property to the root of the document
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-
-      // We listen to the resize event
-      window.addEventListener("resize", () => {
-        // We execute the same script as before
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty("--vh", `${vh}px`);
-      });
-    },
+    }
   },
   components: {
     whoWin,
-    cycButton,
-  },
+    cycButton
+  }
 };
 </script>
 
@@ -519,14 +517,14 @@ $studWidth: 90%;
   user-select: none;
   height: 100vh;
   background: {
-    image: url("../../public/bg.png");
+    image: url("../../public/assets/bg.png");
     repeat: no-repeat;
     size: 100%;
   }
   .top {
     height: 20.4vw;
     background: {
-      image: url("../../public/head.png");
+      image: url("../../public/assets/head.png");
       repeat: no-repeat;
       size: 100%;
     }

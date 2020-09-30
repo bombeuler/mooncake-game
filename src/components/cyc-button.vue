@@ -64,6 +64,8 @@ $borderColor: #ffe9d1;
 }
 
 .icon {
+  width: 6vw;
+  height: 6vw;
   border: #ffffff 1.5px solid;
   background-color: aliceblue;
   box-shadow: 0 1px 3px #000000;
