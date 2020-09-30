@@ -105,7 +105,7 @@
               <div class="icon-11">
                 <van-icon size="7vw" name="bar-chart-o" />
               </div>
-              <span class="others-span">排行榜</span>
+              <span class="others-span">喂食榜</span>
             </div>
             <div id="home" class="others-content" v-on:click="showInfor">
               <div class="icon-10">
@@ -116,11 +116,45 @@
           </div>
         </div>
       </div>
+      <van-dialog v-model="show" title="游戏简介" confirm-button-color="#000">
+        <div class="intro">
+          <div class="dd">
+            <div class="cc">游戏背景</div>
+            <div class="bb">
+              万能的pp快要考试了却还没有复习。为了拯救他(实则拿奖品)，你需要制作记忆月饼喂食pp让他拥有一个满意的分数。
+            </div>
+          </div>
+          <div class="dd">
+            <div class="cc">基本玩法</div>
+            <div class="bb">
+              一份记忆月饼需要1份面，若干份烧糖和相应科目书本的一页为原料。
+            </div>
+            <div class="bb">
+              靠点击收集到足够的原料后，点击pp即可以给pp喂食记忆月饼并令pp的相应科目加10分，pp所有科目分数满足期望值时即成功。
+            </div>
+            <div class="bb">超时会失去1点生命值，生命值为0时游戏结束。</div>
+          </div>
+          <div class="dd">
+            <div class="cc">分数机制</div>
+            <div class="bb">
+              每帮pp通过一次考试可以获得一定积分，在一定时间内完成会有额外分。
+            </div>
+          </div>
+          <div class="dd">
+            <div class="cc">特殊机制</div>
+            <div class="bb">
+              一次最多可收集30份面，30烧糖和5页书。超过限额则不可收集。有一定几率会收集到发霉的书页导致pp食物中毒。
+            </div>
+            <div class="bb">
+              为了保护pp，如果当前收集了发霉的书页或者收集的书页对应不上pp当前要考的科目，需点击垃圾桶清空之前收集到的书页。
+            </div>
+          </div>
+        </div>
+      </van-dialog>
     </div>
   </div>
 </template>
 <script>
-import { Dialog } from "vant";
 import Axios from "axios";
 import md5 from "blueimp-md5";
 import { Notify } from "vant";
@@ -139,7 +173,8 @@ export default {
       phonePattern: /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/,
       active: 0,
       signStatus: 0,
-      showError: false
+      showError: false,
+      show: false,
     };
   },
   methods: {
@@ -149,9 +184,9 @@ export default {
         method: "post",
         url: "/mooncake/php/signin.php",
         data: {
-          values: rsa(JSON.stringify(values))
-        }
-      }).then(response => {
+          values: rsa(JSON.stringify(values)),
+        },
+      }).then((response) => {
         let data = response.data;
         console.log(response, data);
         if (data.status !== 200) {
@@ -162,14 +197,14 @@ export default {
         } else {
           Notify({
             type: "success",
-            message: "登录成功"
+            message: "登录成功",
           });
           sessionStorage.signStatus = 1;
           localStorage.setItem(
             "user",
             JSON.stringify({
               nick: values.nick,
-              password: values.password
+              password: values.password,
             })
           );
 
@@ -189,10 +224,10 @@ export default {
         method: "post",
         url: "/mooncake/php/signup.php",
         data: {
-          values
-        }
+          values,
+        },
       })
-        .then(response => {
+        .then((response) => {
           let data = response.data;
           console.log(data);
           if (data.status !== 200) {
@@ -209,12 +244,7 @@ export default {
       // console.log("submit", values);
     },
     showIntro() {
-      Dialog.alert({
-        title: "游戏简介",
-        message: "弹窗内容",
-        theme: "round-button",
-        className: ""
-      });
+      this.show = true;
     },
     showInfor() {
       this.$router.push("/infor");
@@ -224,15 +254,15 @@ export default {
     },
     gameStart() {
       this.$router.push("/game");
-    }
+    },
   },
   computed: {
     signAnimate: () => {
       return {
         signIn: this.active == 2,
-        signUp: this.active == 1
+        signUp: this.active == 1,
       };
-    }
+    },
   },
   created() {
     if (sessionStorage.signStatus == 1) {
@@ -245,15 +275,15 @@ export default {
       const password = user.password;
       const values = JSON.stringify({
         nick,
-        password
+        password,
       });
       Axios({
         method: "post",
         url: "/mooncake/php/signin.php",
         data: {
-          values: rsa(values)
-        }
-      }).then(response => {
+          values: rsa(values),
+        },
+      }).then((response) => {
         let data = response.data;
         // console.log(response, data);
         if (data.status !== 200) {
@@ -264,7 +294,7 @@ export default {
         } else {
           Notify({
             type: "success",
-            message: "登录成功"
+            message: "登录成功",
           });
           sessionStorage.signStatus = 1;
           this.signStatus = sessionStorage.signStatus;
@@ -286,7 +316,7 @@ export default {
       console.log(vh);
       document.documentElement.style.setProperty("--vh", `${vh}px`);
     });
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -343,7 +373,7 @@ a {
   // position: absolute;
   width: 100%;
   height: 20vh;
-  background-color: rgba(128, 128, 128, 0.9);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 2;
   bottom: 0;
   border-radius: 20px 20px 0 0;
@@ -393,14 +423,36 @@ a {
   border: gray 1.5px solid;
 }
 #game-start {
-  // position: absolute;
-  // top: 60%;
-  // left: 50%;
-  // transform: translateX(-50%);
   width: 40vw;
   font-weight: 700;
 }
 
+.intro {
+  width: 90%;
+  margin: 0 auto;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+.aa {
+  font-size: 12px;
+  text-indent: 24px;
+}
+.bb {
+  font-size: 12px;
+  width: 95%;
+  align-self: center;
+  text-indent: 24px;
+}
+.cc {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+.dd {
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
 @keyframes signIn {
   from {
     top: 15%;

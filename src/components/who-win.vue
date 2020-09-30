@@ -1,11 +1,7 @@
 <template>
   <div>
     <div id="list">
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="---010---"
-      >
+      <van-list v-model="loading" :finished="true">
         <div class="list" v-for="(item, index) in list" :key="index">
           <van-row>
             <van-col span="8">
@@ -22,19 +18,26 @@
                       : 'list-st'
                   ]
                 ]"
-                >{{ index + 1 }}</span
               >
+                <van-icon v-if="index + 1 == 1" name="fire-o" color="white" />
+                <van-icon
+                  v-else-if="index + 1 == 2"
+                  name="fire-o"
+                  color="white"
+                />
+                <van-icon
+                  v-else-if="index + 1 == 3"
+                  name="fire-o"
+                  color="white"
+                />
+                <span v-else>{{ index + 1 }}</span>
+              </span>
             </van-col>
             <van-col span="8">
               <span>{{ item.nick }}</span>
             </van-col>
             <van-col span="8">
-              <span>{{ item.intergral }}</span>
-              <span>
-                <van-icon v-if="index + 1 == 1" name="award" color="yellow" />
-                <van-icon v-if="index + 1 == 2" name="award" color="blue" />
-                <van-icon v-if="index + 1 == 3" name="award" color="red" />
-              </span>
+              <span>{{ item.credit }}</span>
             </van-col>
           </van-row>
         </div>
@@ -43,13 +46,31 @@
     <div id="my-score">
       <van-row id="my-van-row">
         <van-col span="8">
-          <span id="my-id">{{ rank }}</span>
+          <span
+            id="my-id"
+            v-bind:class="[
+              [
+                rank != 1
+                  ? rank != 2
+                    ? rank != 3
+                      ? ''
+                      : 'list-rd'
+                    : 'list-nd'
+                  : 'list-st'
+              ]
+            ]"
+          >
+            <van-icon v-if="rank == 1" name="fire-o" color="white" />
+            <van-icon v-else-if="rank == 2" name="fire-o" color="white" />
+            <van-icon v-else-if="rank == 3" name="fire-o" color="white" />
+            <span v-else>{{ rank }}</span></span
+          >
         </van-col>
         <van-col span="8">
           <span>{{ name }}</span>
         </van-col>
         <van-col span="8">
-          <span>{{ intergral }}</span>
+          <span>{{ credit }}</span>
         </van-col>
       </van-row>
     </div>
@@ -68,25 +89,29 @@ export default {
       method: "post",
       url: "/mooncake/php/infor.php",
       data: {
-        nick: rsa(this.name),
-        num
+        nick: rsa(this.name)
       }
     }).then(response => {
       let data = response.data;
       if (data.status == 200) {
         this.rank = data.rank;
-        this.intergral = data.intergral;
+        this.credit = data.credit;
       }
     });
+    let values = {};
+    values.begin = "0";
+    values.num = num;
+    values = JSON.stringify(values);
     Axios({
       method: "post",
       url: "/mooncake/php/ranklist.php",
       data: {
-        begin: rsa("0")
+        values: rsa(values)
       }
     })
       .then(response => {
         let data = response.data;
+        console.log(data);
         if (data.status === 404) {
           this.finished = true;
           return;
@@ -100,7 +125,7 @@ export default {
   },
   props: {
     length: {
-      default: 5,
+      default: 10,
       type: Number
     }
   },
@@ -108,7 +133,7 @@ export default {
     return {
       list: [],
       rank: "",
-      intergral: "",
+      credit: "",
       name: JSON.parse(localStorage.getItem("user")).nick,
       loading: false,
       finished: false
@@ -119,21 +144,16 @@ export default {
 
 <style lang="scss" scoped>
 #list {
-  background-color: rgb(255, 255, 255, 0.5);
-  width: 80vw;
+  background-color: rgb(0, 0, 0, 0.5);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 1em 1em 0 0;
+  width: 100%;
   margin: 0 auto;
-  height: auto;
+  height: 22vh;
+  max-height: calc(var(--vh, 1vh) * 22);
   overflow: scroll;
-}
-
-#title {
-  border-radius: 20px 20px 0 0;
-  background-color: whitesmoke;
-  width: 80vw;
-  margin: 0 auto;
-  margin-top: 10vh;
-  text-align: center;
-  padding: 5px 0;
+  color: white;
 }
 
 .list {
@@ -144,24 +164,23 @@ export default {
 .list-id {
   display: inline-block;
   background-color: grey;
-  filter: brightness(1.1);
   min-width: 6vw;
   height: 6vw;
   text-align: center;
   line-height: 7vw;
   border-radius: 1vw;
-  box-shadow: -0.5px -1px 3px #888888 inset;
+  // box-shadow: -0.5px -1px 3px #888888 inset;
 }
 .list-st {
-  background-color: rgb(255, 255, 0);
+  background-color: #f5ea4a;
   filter: brightness(1.1);
 }
 .list-nd {
-  background-color: rgb(0, 0, 255);
+  background-color: #9fb4b5;
   filter: brightness(1.1);
 }
 .list-rd {
-  background-color: rgb(255, 0, 0);
+  background-color: #e88600;
   filter: brightness(1.1);
 }
 
@@ -173,11 +192,12 @@ export default {
   text-align: center;
 }
 #my-score > div:nth-child(1) {
-  position: fixed;
-  background-color: rgb(255, 255, 255, 0.8);
+  background-color: rgb(0, 0, 0, 0.8);
   width: 80vw;
   height: 5vh;
   z-index: 0;
+  border-radius: 0 0 1em 1em;
+  color: white;
 }
 
 #my-van-row {
@@ -188,23 +208,10 @@ export default {
 }
 #my-id {
   display: inline-block;
-  background-color: rgb(255, 255, 0);
-  filter: brightness(1.1);
   width: 6vw;
   height: 6vw;
   text-align: center;
   line-height: 7vw;
   border-radius: 1vw;
-  box-shadow: -0.5px -1px 3px #888888 inset;
-}
-
-#arrow-back {
-  background-color: grey;
-  width: 11vw;
-  height: 11vw;
-  text-align: center;
-  line-height: 13.3vw;
-  margin-left: 15vw;
-  margin-top: 5vw;
 }
 </style>

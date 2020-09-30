@@ -4,16 +4,15 @@ namespace mooncake_game\ranklist;
 
 use conn\db;
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: content-type");
-
+require_once("./config.php");
 require_once("conn.php");
-$private = openssl_pkey_get_private(file_get_contents("D:/wamp64/www/mooncake/php/rsa_private_key.pem"));
 
 $db = db::getInstance();
 
 $data = json_decode(file_get_contents("php://input"));
-$data = (openssl_private_decrypt(base64_decode($data->begin), $data, $private)) ? $data : null;
+$data = $db::rsaDecrypt($data->values);
+$data = json_decode($data);
 
+$num = isset($data->num)?$data->num:20;
 
-$db->getRankList($data);
+$db->getRankList($data->begin, $num);

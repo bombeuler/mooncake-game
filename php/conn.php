@@ -14,7 +14,7 @@ class db
     private $_db;
 
     private static $instance = null;
-
+    private static $private = null;
 
     private function __construct()
     {
@@ -36,6 +36,7 @@ class db
     public static function getInstance()
     {
 
+        self::$private = openssl_pkey_get_private(file_get_contents("D:/wamp64/www/mooncake/php/rsa_private_key.pem"));
         if (!self::$instance instanceof self) {
             self::$instance = new self();
         }
@@ -43,12 +44,18 @@ class db
         return self::$instance;
     }
 
-    public function signUp($uid, $name, $tel, $nick, $password)
+    public static function rsaDecrypt($data)
     {
-        $stmt = $this->_db->prepare("INSERT INTO user (uid, name, telphone, nick, password, id) VALUES (?, ?, ?, ?, ?, ?);");
-        $stmt->bind_param("ssssss", $uid, $name, $tel, $nick, $password, $id);
+        return $data = (openssl_private_decrypt(base64_decode($data), $data, self::$private)) ? $data : null;
+    }
+
+    public function signUp($nick, $password, $uid = '', $name = '', $tel = '')
+    {
+        $stmt = $this->_db->prepare("INSERT INTO user (uid, name, telphone, nick, password, id, lastPlayTime) VALUES (?, ?, ?, ?, ?, ?, ?);");
+        $stmt->bind_param("sssssss", $uid, $name, $tel, $nick, $password, $id, $lastPlayTime);
         $id = md5($uid . $nick);
-        $password=md5("S&T".$password."hustmaths");
+        $lastPlayTime = time();
+        $password = md5("S&T" . $password . "hustmaths");
         $res = $stmt->execute();
         if (!$res) {
             if (strpos($this->_db->error, "PRIMARY") !== false) {
@@ -75,7 +82,7 @@ class db
             echo json_encode(['msg' => "该用户不存在", 'status' => 201]);
             return;
         }
-        $pwd=md5("S&T".$pwd."hustmaths");
+        $pwd = md5("S&T" . $pwd . "hustmaths");
         while ($row = $res->fetch_assoc()) {
             $password = $row["password"];
         }
@@ -86,18 +93,29 @@ class db
         }
     }
 
+    public function authen($name, $uid, $tel, $nick)
+    {
+        $sql = "UPDATE user SET name='$name' , uid = '$uid' , telphone='$tel' WHERE nick = '$nick'";
+        $res = $this->_db->query($sql);
+        if (!$res) {
+            echo $this->_db->error;
+            return;
+        }
+        echo json_encode(['status' => 200]);
+    }
+
     public function myRank($nick)
     {
-        $sql = "SELECT intergral FROM user WHERE nick = '$nick'";
+        $sql = "SELECT credit FROM user WHERE nick = '$nick'";
         $res = $this->_db->query($sql);
         if (!$res) {
             echo $this->_db->error;
             return;
         }
         while ($row = $res->fetch_assoc()) {
-            $intergral = $row["intergral"];
+            $credit = $row["credit"];
         }
-        $sql = "SELECT count(intergral) as rank FROM user WHERE intergral > (SELECT intergral FROM user WHERE nick = '$nick');";
+        $sql = "SELECT count(credit) as rank FROM user WHERE credit > (SELECT credit FROM user WHERE nick = '$nick');";
         $res = $this->_db->query($sql);
         if (!$res) {
             echo $this->_db->error;
@@ -106,18 +124,21 @@ class db
         while ($row = $res->fetch_assoc()) {
             $rank = $row["rank"] + 1;
         }
-        $sql = "SELECT count(intergral) as rank FROM user WHERE intergral > (SELECT intergral FROM user WHERE nick = '$nick');";
+        $sql = "SELECT count(credit) as rank FROM user WHERE credit = (SELECT credit FROM user WHERE nick = '$nick') AND lastPlayTime > (SELECT lastPlayTime FROM user WHERE nick = '$nick');";
         $res = $this->_db->query($sql);
         if (!$res) {
             echo $this->_db->error;
             return;
         }
-        echo json_encode(["rank" => $rank, "intergral" => $intergral, "status" => 200]);
+        while ($row = $res->fetch_assoc()) {
+            $rank += $row["rank"];
+        }
+        echo json_encode(["rank" => $rank, "credit" => $credit, "status" => 200]);
     }
 
     public function getRankList($begin, $length = 20)
     {
-        $sql = "SELECT intergral,nick,uid FROM user ORDER BY intergral DESC, uid ASC LIMIT $begin ,$length";
+        $sql = "SELECT credit,nick,uid FROM user ORDER BY credit DESC, lastPlayTime DESC LIMIT $begin ,$length";
         $res = $this->_db->query($sql);
         if (!$res) {
             echo $this->_db->error;
@@ -132,15 +153,15 @@ class db
         echo json_encode(['res' => $result, 'status' => 200]);
     }
 
-    public function updateGame($nick,$score,$totalTime){
-        $time=time();
-        $sql="UPDATE user SET credit = credit+$score , totalTime = totalTime+$totalTime , lastPlayTime=$time WHERE nick='$nick';";
-        $res=$this->_db->query($sql);
+    public function updateGame($nick, $score, $totalTime)
+    {
+        $time = time();
+        $sql = "UPDATE user SET credit = credit+$score , totalTime = totalTime+$totalTime , lastPlayTime=$time WHERE nick='$nick';";
+        $res = $this->_db->query($sql);
         if (!$res) {
             echo $this->_db->error;
-            return ;
+            return;
         }
         echo 1;
-        
     }
 }
