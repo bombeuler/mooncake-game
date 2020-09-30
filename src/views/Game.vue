@@ -1,6 +1,6 @@
 /* eslint-disable for-direction */
 <template>
-  <div>
+  <div class="bg">
     <van-overlay :show="isEnd" class="over-box">
       <div class="end-box">
         <div class="end-head">
@@ -122,7 +122,6 @@
 
 <script>
 import Student from "../untils/Student";
-import { request } from "../network/index";
 import {
   MIN,
   badPage,
@@ -132,12 +131,14 @@ import {
   sugarMaxN,
   doughMaxN
 } from "../untils/game.config";
+import rsa from "../untils/rsa";
+import Axios from "axios";
 
 export default {
   name: "Game",
   data() {
     return {
-      isEnd: true,
+      isEnd: false,
       notice: "",
       progressColor: "#ecc02c",
       trashNumber: 0,
@@ -147,7 +148,7 @@ export default {
       endPeopleTime: null,
       cleanTimeout: false,
       name: "",
-      life: 3,
+      life: 1,
       isAlive: true,
       score: 0,
       sugar: 0,
@@ -228,24 +229,24 @@ export default {
     isAlive(newVal, oldVal) {
       if (!newVal) {
         console.log(8);
-        const nick = this.nick;
+        const nick = this.name;
         const time = this.endTime - this.firstTime;
         //TODO
         const score = this.score;
+        let values = rsa(JSON.stringify({ nick, time, score }));
         this.$toast.loading({
           message: "上传分数中...",
           forbidClick: true
         });
-        request({
+        Axios({
           method: "post",
-          url: "/game.php",
+          url: "/mooncake/php/game.php",
           data: {
-            nick,
-            time,
-            score
+            values
           }
         })
           .then(res => {
+            console.log(res.data);
             if (res.data === 1) {
               console.log("etuu");
               this.$toast.success("分数已上传");

@@ -2,6 +2,8 @@
 
 namespace conn;
 
+use DateTime;
+
 class db
 {
     private $DB_HOST = "localhost";
@@ -86,15 +88,6 @@ class db
 
     public function myRank($nick)
     {
-        $sql = "SELECT count(intergral) as rank FROM user WHERE intergral > (SELECT intergral FROM user WHERE nick = '$nick');";
-        $res = $this->_db->query($sql);
-        if (!$res) {
-            echo $this->_db->error;
-            return;
-        }
-        while ($row = $res->fetch_assoc()) {
-            $rank = $row["rank"] + 1;
-        }
         $sql = "SELECT intergral FROM user WHERE nick = '$nick'";
         $res = $this->_db->query($sql);
         if (!$res) {
@@ -104,12 +97,27 @@ class db
         while ($row = $res->fetch_assoc()) {
             $intergral = $row["intergral"];
         }
+        $sql = "SELECT count(intergral) as rank FROM user WHERE intergral > (SELECT intergral FROM user WHERE nick = '$nick');";
+        $res = $this->_db->query($sql);
+        if (!$res) {
+            echo $this->_db->error;
+            return;
+        }
+        while ($row = $res->fetch_assoc()) {
+            $rank = $row["rank"] + 1;
+        }
+        $sql = "SELECT count(intergral) as rank FROM user WHERE intergral > (SELECT intergral FROM user WHERE nick = '$nick');";
+        $res = $this->_db->query($sql);
+        if (!$res) {
+            echo $this->_db->error;
+            return;
+        }
         echo json_encode(["rank" => $rank, "intergral" => $intergral, "status" => 200]);
     }
 
     public function getRankList($begin, $length = 20)
     {
-        $sql = " SELECT intergral,nick,uid FROM user ORDER BY intergral DESC, uid ASC LIMIT $begin ,$length";
+        $sql = "SELECT intergral,nick,uid FROM user ORDER BY intergral DESC, uid ASC LIMIT $begin ,$length";
         $res = $this->_db->query($sql);
         if (!$res) {
             echo $this->_db->error;
@@ -122,5 +130,17 @@ class db
             $result[] = $row;
         }
         echo json_encode(['res' => $result, 'status' => 200]);
+    }
+
+    public function updateGame($nick,$score,$totalTime){
+        $time=time();
+        $sql="UPDATE user SET credit = credit+$score , totalTime = totalTime+$totalTime , lastPlayTime=$time WHERE nick='$nick';";
+        $res=$this->_db->query($sql);
+        if (!$res) {
+            echo $this->_db->error;
+            return ;
+        }
+        echo 1;
+        
     }
 }

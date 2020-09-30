@@ -1,5 +1,5 @@
-const MAX = 15;
-const MIN = 5;
+const MAX = 1;
+const MIN = 0;
 const RADNUM = 3;
 const Just0to1 = x => Math.exp(-x);
 const subLists = new Map([

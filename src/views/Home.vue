@@ -1,11 +1,7 @@
 <template>
   <div>
     <div id="container">
-      <div
-        id="infor"
-        v-if="!signStatus"
-        v-bind:class="[active == 0 ? 'signIn' : 'signUp']"
-      >
+      <div id="infor" v-if="!signStatus">
         <van-tabs
           v-model="active"
           background="rgba(255, 255, 255,.1)"
@@ -52,42 +48,6 @@
                 :show-error="false"
               >
                 <van-field
-                  v-model="stuNum"
-                  name="uid"
-                  label="学号"
-                  placeholder="U202001010"
-                  maxlength="10"
-                  :rules="[
-                    {
-                      required: true,
-                      pattern: uidPattern,
-                      message: '请输入正确学号'
-                    }
-                  ]"
-                />
-                <van-field
-                  v-model="realName"
-                  name="name"
-                  label="真名"
-                  placeholder="阿尔托莉雅"
-                  :rules="[{ required: true, message: '请填写真名' }]"
-                />
-                <van-field
-                  v-model="tel"
-                  name="tel"
-                  type="tel"
-                  label="电话"
-                  maxlength="11"
-                  placeholder
-                  :rules="[
-                    {
-                      required: true,
-                      pattern: phonePattern,
-                      message: '电话格式不正确'
-                    }
-                  ]"
-                />
-                <van-field
                   v-model="username"
                   name="nick"
                   label="昵称"
@@ -117,40 +77,42 @@
           <a href="http://hustmaths.top" style="color: #000;">前往科协首页</a>
         </div>
       </div>
-      <div v-if="signStatus" id="game-start">
-        <van-button
-          icon="play"
-          type="default"
-          text="开始游戏"
-          round
-          block
-          @click="gameStart"
-        ></van-button>
-        <div
-          style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;"
-        >
-          <a href="http://hustmaths.top">前往科协首页</a>
+      <div class="gg">
+        <div v-if="signStatus" id="game-start">
+          <van-button
+            icon="play"
+            type="default"
+            text="开始游戏"
+            round
+            block
+            @click="gameStart"
+          ></van-button>
+          <div
+            style="text-align:center;font-size:12px;font-weight:400;margin-top:12px;"
+          >
+            <a href="http://hustmaths.top">前往科协首页</a>
+          </div>
         </div>
-      </div>
-      <div v-if="signStatus" id="others">
-        <div id="others-box">
-          <div id="intro" class="others-content" v-on:click="showIntro">
-            <div class="icon-10">
-              <van-icon size="5.7vw" name="newspaper-o" />
+        <div v-if="signStatus" id="others">
+          <div id="others-box">
+            <div id="intro" class="others-content" v-on:click="showIntro">
+              <div class="icon-10">
+                <van-icon size="5.7vw" name="newspaper-o" />
+              </div>
+              <span class="others-span">游戏简介</span>
             </div>
-            <span class="others-span">游戏简介</span>
-          </div>
-          <div id="list" class="others-content" v-on:click="showList">
-            <div class="icon-11">
-              <van-icon size="7vw" name="bar-chart-o" />
+            <div id="list" class="others-content" v-on:click="showList">
+              <div class="icon-11">
+                <van-icon size="7vw" name="bar-chart-o" />
+              </div>
+              <span class="others-span">排行榜</span>
             </div>
-            <span class="others-span">排行榜</span>
-          </div>
-          <div id="home" class="others-content" v-on:click="showInfor">
-            <div class="icon-10">
-              <van-icon size="5.7vw" name="home-o" />
+            <div id="home" class="others-content" v-on:click="showInfor">
+              <div class="icon-10">
+                <van-icon size="5.7vw" name="home-o" />
+              </div>
+              <span class="others-span">个人中心</span>
             </div>
-            <span class="others-span">个人中心</span>
           </div>
         </div>
       </div>
@@ -203,8 +165,13 @@ export default {
             message: "登录成功"
           });
           sessionStorage.signStatus = 1;
-          localStorage.nick = values.nick;
-          localStorage.password = values.password;
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              nick: values.nick,
+              password: values.password
+            })
+          );
 
           this.signStatus = sessionStorage.signStatus;
         }
@@ -216,6 +183,7 @@ export default {
     onSignUp(values) {
       values.password = md5(values.password);
       values = JSON.stringify(values);
+      console.log(values);
       values = rsa(values);
       Axios({
         method: "post",
@@ -271,19 +239,19 @@ export default {
       this.signStatus = sessionStorage.signStatus;
       return;
     }
-    if (!localStorage.getItem("user")) {
+    if (localStorage.getItem("user")) {
       const user = JSON.parse(localStorage.getItem("user"));
       const nick = user.nick;
       const password = user.password;
-      const values = {
+      const values = JSON.stringify({
         nick,
         password
-      };
+      });
       Axios({
         method: "post",
         url: "/mooncake/php/signin.php",
         data: {
-          values
+          values: rsa(values)
         }
       }).then(response => {
         let data = response.data;
@@ -304,6 +272,20 @@ export default {
       });
     }
     // console.log(localStorage);
+  },
+  mounted() {
+    // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    let vh = window.innerHeight * 0.01;
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+
+    // We listen to the resize event
+    window.addEventListener("resize", () => {
+      // We execute the same script as before
+      let vh = window.innerHeight * 0.01;
+      console.log(vh);
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    });
   }
 };
 </script>
@@ -319,24 +301,22 @@ a {
   background: #00ff00 url("../../public/bg.png") no-repeat fixed right;
   background-size: cover;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   background-color: rgb(168, 168, 168);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
 #infor {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
+  top: 30%;
   padding-top: 30px;
   border-radius: 30px;
   background-color: rgba(255, 255, 255, 0.8);
-}
-.signIn {
-  top: 30%;
-  animation: signIn 0.2s linear;
-}
-.signUp {
-  top: 15%;
-  animation: signUp 0.1s linear;
 }
 #signin,
 #signup {
@@ -351,8 +331,16 @@ a {
   // background-color: grey;
 }
 
+.gg {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 40vh;
+  align-items: center;
+}
 #others {
-  position: absolute;
+  // position: absolute;
   width: 100%;
   height: 20vh;
   background-color: rgba(128, 128, 128, 0.9);
@@ -405,10 +393,10 @@ a {
   border: gray 1.5px solid;
 }
 #game-start {
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translateX(-50%);
+  // position: absolute;
+  // top: 60%;
+  // left: 50%;
+  // transform: translateX(-50%);
   width: 40vw;
   font-weight: 700;
 }

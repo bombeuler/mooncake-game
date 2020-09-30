@@ -1,6 +1,6 @@
 <?php
 
-namespace mooncake_game\signup;
+namespace mooncake_game\game;
 
 use conn\db;
 
@@ -11,9 +11,9 @@ require_once("conn.php");
 $private = openssl_pkey_get_private(file_get_contents("D:/wamp64/www/mooncake/php/rsa_private_key.pem"));
 
 $db = db::getInstance();
-
 $data = json_decode(file_get_contents("php://input"));
 $data = (openssl_private_decrypt(base64_decode($data->values), $data, $private)) ? $data : null;
-$data = json_decode($data);
+$data=json_decode($data);
 
-$db->signUp($data->uid, $data->name, $data->tel, $data->nick, $data->password);
+
+$db->updateGame($data->nick,$data->score,$data->time);
