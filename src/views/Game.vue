@@ -83,6 +83,7 @@
         </div>
         <div class="student-out">
           <div class="student" @click="makeCake">
+            <div class="notice game-not">{{ gameNotice }}</div>
             <div class="notice">{{ notice }}</div>
             <div class="people-box">
               <van-image
@@ -117,7 +118,10 @@
             @click="plusSubject(subject.key)"
             class="subject-button"
             color="#2c2c2c"
-            >{{ subject.name }}</van-button
+            >{{
+              `${subject.name}
+            ${hasSubNum(subject.key)}`
+            }}</van-button
           >
         </div>
         <div class="subject-group">
@@ -127,7 +131,10 @@
             @click="plusSubject(subject.key)"
             class="subject-button"
             color="#2c2c2c"
-            >{{ subject.name }}</van-button
+            >{{
+              `${subject.name}
+            ${hasSubNum(subject.key)}`
+            }}</van-button
           >
         </div>
       </van-row>
@@ -158,6 +165,7 @@ export default {
     return {
       isEnd: false,
       notice: "",
+      gameNotice: "请点击烧糖和面",
       progressColor: "#ecc02c",
       trashNumber: 0,
       firstTime: null,
@@ -185,16 +193,16 @@ export default {
       ]
     };
   },
-  created() {
-    if (sessionStorage.signStatus != 1) {
-      this.$router.push("/home");
-    }
-    if (localStorage.getItem("user")) {
-      this.name = JSON.parse(localStorage.getItem("user")).nick;
-    } else {
-      this.$router.push("/home");
-    }
-  },
+  // created() {
+  //   if (sessionStorage.signStatus != 1) {
+  //     this.$router.push("/home");
+  //   }
+  //   if (localStorage.getItem("user")) {
+  //     this.name = JSON.parse(localStorage.getItem("user")).nick;
+  //   } else {
+  //     this.$router.push("/home");
+  //   }
+  // },
   mounted() {
     this.firstTime = new Date().getTime();
     this.firstPeopleTime = this.firstTime;
@@ -212,6 +220,17 @@ export default {
     });
   },
   computed: {
+    hasSubNum() {
+      return subbb => {
+        let flag = 0;
+        for (let i = 0; i < this.hasSubject.length; i++) {
+          if (this.hasSubject[i] === subbb) {
+            flag++;
+          }
+        }
+        return flag;
+      };
+    },
     progressNum() {
       return sub =>
         `linear-gradient(to right,${this.progressColor} ${parseInt(
@@ -305,10 +324,23 @@ export default {
         const random = Math.random();
         if (random <= badPage) {
           this.hasSubject.push(false);
+          this.gameNotice = "收集了发霉的课本";
+          this.$toast({
+            message: "收集到了发霉的课本，请丢进垃圾桶",
+            position: "top",
+            duration: 1500
+          });
         } else {
           this.hasSubject.push(subkey);
+          this.gameNotice = `收集了${Student.subLists.get(subkey)}`;
         }
       } else {
+        this.$toast({
+          message: "达到课本收集限额",
+          position: "top",
+          duration: 1500
+        });
+        this.gameNotice = "达到课本收集限额";
         return false;
       }
       return true;
@@ -439,6 +471,10 @@ $bombYellow: #ecc02c;
 $onechoBlue: #0d4f89;
 $borderColor: #ffe9d1;
 $studWidth: 90%;
+
+.game-not {
+  background-color: $birthRed !important;
+}
 
 .bg {
   height: 100vh;
