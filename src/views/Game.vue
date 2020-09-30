@@ -245,17 +245,16 @@ export default {
       }
     },
     // eslint-disable-next-line no-unused-vars
-    // TODO
-    // trashNumber(newVal, oldVal) {
-    //   if (this.firstTime >= new Date("2020/10/5").getTime() && newVal >= 300) {
-    //     const nick = this.nick;
-    //     request({
-    //       method: "get",
-    //       url: "/record",
-    //       data: { record: true },
-    //     }).then((res) => {});
-    //   }
-    // },
+    trashNumber(newVal, oldVal) {
+      if (this.firstTime >= new Date("2020/10/5").getTime() && newVal >= 300) {
+        const nick = this.nick;
+        Axios({
+          method: "post",
+          url: "/mooncake/php/record.php",
+          data: { nick, record: true }
+        });
+      }
+    },
     // eslint-disable-next-line no-unused-vars
     isAlive(newVal, oldVal) {
       if (!newVal) {
