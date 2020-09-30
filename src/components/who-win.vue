@@ -73,7 +73,6 @@ export default {
       }
     }).then(response => {
       let data = response.data;
-      console.log(data);
       if (data.status == 200) {
         this.rank = data.rank;
         this.intergral = data.intergral;
@@ -88,7 +87,6 @@ export default {
     })
       .then(response => {
         let data = response.data;
-        console.log(data);
         if (data.status === 404) {
           this.finished = true;
           return;

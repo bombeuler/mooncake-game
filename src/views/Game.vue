@@ -4,6 +4,7 @@
     <van-overlay :show="isEnd" class="over-box">
       <div class="end-box">
         <div class="end-head">
+          <div class="score-head">得分</div>
           <div class="score-box">{{ score }}</div>
         </div>
         <div class="end-middle"><who-win /></div>
@@ -149,7 +150,7 @@ export default {
   name: "Game",
   data() {
     return {
-      isEnd: true,
+      isEnd: false,
       notice: "",
       progressColor: "#ecc02c",
       trashNumber: 0,
@@ -180,11 +181,9 @@ export default {
   },
   created() {
     if (localStorage.getItem("user")) {
-      console.log(1);
       this.name = JSON.parse(localStorage.getItem("user")).nick;
     } else {
       this.$router.push("/home");
-      console.log(2);
     }
   },
   mounted() {
@@ -239,10 +238,8 @@ export default {
     // eslint-disable-next-line no-unused-vars
     isAlive(newVal, oldVal) {
       if (!newVal) {
-        console.log(8);
         const nick = this.nick;
         const time = this.endTime - this.firstTime;
-        //TODO
         const score = this.score;
         this.$toast.loading({
           message: "上传分数中...",
@@ -259,7 +256,6 @@ export default {
         })
           .then(res => {
             if (res.data === 1) {
-              console.log("etuu");
               this.$toast.success("分数已上传");
             } else {
               this.$toast.oast.fail("分数上传失败，请检查网络状态");
@@ -351,7 +347,6 @@ export default {
       this.timeInterval(t => {
         this.notice = `还剩${(made.deadTime - t).toString()}秒`;
         if (made.deadTime - t <= 0) {
-          console.log(t);
           if (this.life > 1) {
             this.life--;
             this.plusScore(0);
@@ -454,16 +449,21 @@ $studWidth: 90%;
     margin: 0 auto;
     width: 90vw;
     height: 150vw;
-    background-color: black;
+    background-color: rgba(189, 186, 186, 0.9);
     @include flex-normal(column);
+    border-radius: 1em;
     .end-head {
+      @include flex-normal(column);
       width: 100%;
-      height: 10%;
+      height: 15%;
+      .score-head {
+        margin-top: 3px;
+      }
       .score-box {
         @include flex-normal(row);
         height: 100%;
         width: auto;
-        color: $sadBlue;
+        color: black;
         font: {
           size: 2.5em;
         }
@@ -471,15 +471,17 @@ $studWidth: 90%;
     }
     .end-middle {
       @include flex-normal(row);
-      width: 100%;
+      width: 95%;
+      background-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 1px 3px #000000;
+      border-radius: 1em;
       flex-shrink: 1;
       flex-grow: 1;
     }
     .end-foot {
       @include flex-normal(row);
       width: 100%;
-      height: 20%;
-      background-color: yellow;
+      height: 16%;
     }
   }
 }

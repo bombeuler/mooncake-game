@@ -75,6 +75,6 @@ $borderColor: #ffe9d1;
 .others-span {
   font-size: 0.6em;
   margin-top: 5px;
-  color: $onechoBlue;
+  color: black;
 }
 </style>

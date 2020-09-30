@@ -14,7 +14,7 @@ const subLists = new Map([
 const badPage = 0.02;
 const subjectMax = 5;
 const scoreStep = 10;
-const scoreExtend = 6;
+const scoreExtend = 16;
 const sugarMaxN = 30;
 const doughMaxN = 30;
 
