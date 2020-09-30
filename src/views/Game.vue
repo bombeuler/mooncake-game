@@ -147,7 +147,7 @@ import {
   scoreStep,
   scoreExtend,
   sugarMaxN,
-  doughMaxN,
+  doughMaxN
 } from "../untils/game.config";
 import rsa from "../untils/rsa";
 import Axios from "axios";
@@ -184,8 +184,8 @@ export default {
         { name: "实变函数", key: "m2" },
         { name: "复变函数", key: "m3" },
         { name: "近世代数", key: "m4" },
-        { name: "概率论", key: "m5" },
-      ],
+        { name: "概率论", key: "m5" }
+      ]
     };
   },
   created() {
@@ -202,13 +202,13 @@ export default {
   },
   computed: {
     progressNum() {
-      return (sub) =>
+      return sub =>
         `linear-gradient(to right,${this.progressColor} ${parseInt(
           (sub.eatAdd / sub.grade) * 100
         )}%, #b2bec3 0px)`;
     },
     subValue() {
-      return (subjectKey) => Student.subLists.get(subjectKey);
+      return subjectKey => Student.subLists.get(subjectKey);
     },
     subjectOut1() {
       let arr = this.subjects;
@@ -221,7 +221,7 @@ export default {
       let out = [];
       out = arr.slice(3);
       return out;
-    },
+    }
   },
   watch: {
     "nowStudent.finnishedSubjects": {
@@ -231,20 +231,19 @@ export default {
           this.plusScore(scoreStep);
           this.makeStudent(this.score);
         }
-      },
+      }
     },
     // eslint-disable-next-line no-unused-vars
-    // TODO
-    // trashNumber(newVal, oldVal) {
-    //   if (this.firstTime >= new Date("2020/10/5").getTime() && newVal >= 300) {
-    //     const nick = this.nick;
-    //     request({
-    //       method: "get",
-    //       url: "/record",
-    //       data: { record: true },
-    //     }).then((res) => {});
-    //   }
-    // },
+    trashNumber(newVal, oldVal) {
+      if (this.firstTime >= new Date("2020/10/5").getTime() && newVal >= 300) {
+        const nick = this.nick;
+        Axios({
+          method: "post",
+          url: "/mooncake/php/record.php",
+          data: { nick, record: true }
+        });
+      }
+    },
     // eslint-disable-next-line no-unused-vars
     isAlive(newVal, oldVal) {
       if (!newVal) {
@@ -254,16 +253,16 @@ export default {
         let values = rsa(JSON.stringify({ nick, time, score }));
         this.$toast.loading({
           message: "上传分数中...",
-          forbidClick: true,
+          forbidClick: true
         });
         Axios({
           method: "post",
           url: "/mooncake/php/game.php",
           data: {
-            values,
-          },
+            values
+          }
         })
-          .then((res) => {
+          .then(res => {
             console.log(res.data);
             if (res.data === 1) {
               this.$toast.success("分数已上传");
@@ -272,14 +271,14 @@ export default {
             }
           })
           // eslint-disable-next-line no-unused-vars
-          .catch((err) => {
+          .catch(err => {
             this.$toast.fail("分数上传失败，请检查网络状态");
           })
           .finally(() => {
             this.isEnd = true;
           });
       }
-    },
+    }
   },
   methods: {
     plusItem(item, limit) {
@@ -354,7 +353,7 @@ export default {
       }
       this.deadTime = made.deadTime;
       this.finnishedSub = 0;
-      this.timeInterval((t) => {
+      this.timeInterval(t => {
         this.notice = `还剩${(made.deadTime - t).toString()}秒`;
         if (made.deadTime - t <= 0) {
           if (this.life > 1) {
@@ -426,12 +425,12 @@ export default {
         let vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty("--vh", `${vh}px`);
       });
-    },
+    }
   },
   components: {
     whoWin,
-    cycButton,
-  },
+    cycButton
+  }
 };
 </script>
 
