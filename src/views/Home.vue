@@ -51,8 +51,9 @@
                   v-model="username"
                   name="nick"
                   label="昵称"
-                  placeholder="可可爱爱的pp"
-                  :rules="[{ required: true, message: '请填写昵称' }]"
+                  maxlength="6"
+                  placeholder="可爱的pp"
+                  :rules="[{ required: true, message: '昵称长度最长为6' }]"
                 />
                 <van-field
                   v-model="password"
@@ -60,7 +61,13 @@
                   name="password"
                   label="密码"
                   placeholder
-                  :rules="[{ required: true, message: '请填写密码' }]"
+                  :rules="[
+                    {
+                      required: true,
+                      pattern: pwdPattern,
+                      message: '密码应不少于6位'
+                    }
+                  ]"
                 />
                 <div style="margin: 16px;">
                   <van-button round block type="default" native-type="submit"
@@ -166,11 +173,7 @@ export default {
     return {
       username: "",
       password: "",
-      stuNum: "",
-      realName: "",
-      tel: "",
-      uidPattern: /U\d{9,}/,
-      phonePattern: /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/,
+      pwdPattern: /.{6,}/,
       active: 0,
       signStatus: 0,
       showError: false,

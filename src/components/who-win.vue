@@ -84,49 +84,53 @@ import rsa from "../untils/rsa";
 export default {
   name: "whoWin",
   created() {
-    const num = this.length;
-    Axios({
-      method: "post",
-      url: "/mooncake/php/infor.php",
-      data: {
-        nick: rsa(this.name)
-      }
-    }).then(response => {
-      let data = response.data;
-      if (data.status == 200) {
-        this.rank = data.rank;
-        this.credit = data.credit;
-      }
-    });
-    let values = {};
-    values.begin = "0";
-    values.num = num;
-    values = JSON.stringify(values);
-    Axios({
-      method: "post",
-      url: "/mooncake/php/ranklist.php",
-      data: {
-        values: rsa(values)
-      }
-    })
-      .then(response => {
-        let data = response.data;
-        console.log(data);
-        if (data.status === 404) {
-          this.finished = true;
-          return;
-        } else if (data.status === 200) {
-          this.list = data.res;
-        }
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+    //   const num = this.length;
+    //   Axios({
+    //     method: "post",
+    //     url: "/mooncake/php/infor.php",
+    //     data: {
+    //       nick: rsa(this.name)
+    //     }
+    //   }).then(response => {
+    //     let data = response.data;
+    //     if (data.status == 200) {
+    //       this.rank = data.rank;
+    //       this.credit = data.credit;
+    //     }
+    //   });
+    //   let values = {};
+    //   values.begin = "0";
+    //   values.num = num;
+    //   values = JSON.stringify(values);
+    //   Axios({
+    //     method: "post",
+    //     url: "/mooncake/php/ranklist.php",
+    //     data: {
+    //       values: rsa(values)
+    //     }
+    //   })
+    //     .then(response => {
+    //       let data = response.data;
+    //       console.log(data);
+    //       if (data.status === 404) {
+    //         this.finished = true;
+    //         return;
+    //       } else if (data.status === 200) {
+    //         this.list = data.res;
+    //       }
+    //     })
+    //     .catch(function(error) {
+    //       console.log(error);
+    //     });
   },
   props: {
     length: {
       default: 5,
       type: Number
+    },
+    isEnd: {
+      default: false,
+      type: Boolean
     }
   },
   data() {
@@ -138,6 +142,51 @@ export default {
       loading: false,
       finished: false
     };
+  },
+  watch: {
+    // eslint-disable-next-line no-unused-vars
+    isEnd(newVal, oldVal) {
+      if (newVal) {
+        const num = this.length;
+        Axios({
+          method: "post",
+          url: "/mooncake/php/infor.php",
+          data: {
+            nick: rsa(this.name)
+          }
+        }).then(response => {
+          let data = response.data;
+          if (data.status == 200) {
+            this.rank = data.rank;
+            this.credit = data.credit;
+          }
+        });
+        let values = {};
+        values.begin = "0";
+        values.num = num;
+        values = JSON.stringify(values);
+        Axios({
+          method: "post",
+          url: "/mooncake/php/ranklist.php",
+          data: {
+            values: rsa(values)
+          }
+        })
+          .then(response => {
+            let data = response.data;
+            console.log(data);
+            if (data.status === 404) {
+              this.finished = true;
+              return;
+            } else if (data.status === 200) {
+              this.list = data.res;
+            }
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      }
+    }
   }
 };
 </script>

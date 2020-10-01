@@ -7,9 +7,9 @@
           <div class="score-head">得分</div>
           <div class="score-box">{{ score }}</div>
         </div>
-        <div class="end-middle"><who-win /></div>
+        <div class="end-middle"><who-win :is-end="isEnd" /></div>
         <span style="font-size:13px;color:white;"
-          >扫描下方二维码填写调查问卷</span
+          >长按保存扫描下方二维码填写调查问卷</span
         >
         <van-image
           width="30vw"
@@ -193,16 +193,16 @@ export default {
       ]
     };
   },
-  // created() {
-  //   if (sessionStorage.signStatus != 1) {
-  //     this.$router.push("/home");
-  //   }
-  //   if (localStorage.getItem("user")) {
-  //     this.name = JSON.parse(localStorage.getItem("user")).nick;
-  //   } else {
-  //     this.$router.push("/home");
-  //   }
-  // },
+  created() {
+    if (sessionStorage.signStatus != 1) {
+      this.$router.push("/home");
+    }
+    if (localStorage.getItem("user")) {
+      this.name = JSON.parse(localStorage.getItem("user")).nick;
+    } else {
+      this.$router.push("/home");
+    }
+  },
   mounted() {
     this.firstTime = new Date().getTime();
     this.firstPeopleTime = this.firstTime;

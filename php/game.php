@@ -3,8 +3,7 @@
 namespace mooncake_game\game;
 
 use conn\db;
-
-require_once("./config.php");
+require_once("config.php");
 require_once("conn.php");
 
 $db = db::getInstance();
